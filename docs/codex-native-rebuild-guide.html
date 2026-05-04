@@ -714,9 +714,11 @@ Codex:
             <li><code>PreToolUse</code>: 파괴적 명령, 루프, 위험 패턴 사전 검사</li>
             <li><code>PostToolUse</code>: 실행 후 상태 기록</li>
             <li><code>SessionStart</code>: 프로젝트 상태 요약</li>
-            <li><code>UserPromptSubmit</code>: checkpoint 존재 알림</li>
             <li><code>Stop</code>: checkpoint 저장</li>
           </ul>
+          <p>
+            <code>UserPromptSubmit</code> checkpoint 알림은 비활성화한다. 이 이벤트는 출력이 있을 때 JSON-safe 형식이 필요하며, plain-text 알림은 <code>invalid user prompt submit JSON output</code> 오류를 만들 수 있다.
+          </p>
 
           <h3>5. Rules와 AGENTS</h3>
           <p>

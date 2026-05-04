@@ -52,8 +52,9 @@ RUNTIME_MARKERS = [
     "Delegate Mode",
 ]
 
-ALLOWED_HOOK_EVENTS = {"PreToolUse", "PostToolUse", "SessionStart", "UserPromptSubmit", "Stop"}
-REQUIRED_HOOK_EVENTS = {"PreToolUse", "PostToolUse", "SessionStart", "UserPromptSubmit", "Stop"}
+ALLOWED_HOOK_EVENTS = {"PreToolUse", "PostToolUse", "SessionStart", "Stop"}
+REQUIRED_HOOK_EVENTS = {"PreToolUse", "PostToolUse", "SessionStart", "Stop"}
+JSON_OUTPUT_HOOK_EVENTS = {"UserPromptSubmit"}
 RESIDUE_PATTERNS = [
     r"\.claude",
     r"CLAUDE\.md",
@@ -633,6 +634,8 @@ def check_config_and_hooks(checks: list[Check]) -> None:
                     hook_issues.append(f"{prefix}: invalid timeout")
                 if isinstance(command, str) and "prettier" in command.lower():
                     hook_issues.append(f"{prefix}: automatic prettier rewrite hook is disabled by policy")
+                if event_name in JSON_OUTPUT_HOOK_EVENTS:
+                    hook_issues.append(f"{prefix}: {event_name} requires JSON-safe output and is disabled by policy")
     if hook_issues:
         add(checks, "config", "hook event policy", "FAIL", "; ".join(hook_issues))
     else:

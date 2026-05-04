@@ -64,9 +64,11 @@
     "PreToolUse",
     "PostToolUse",
     "SessionStart",
-    "UserPromptSubmit",
     "Stop"
   ],
+  "disabled_hook_events": {
+    "UserPromptSubmit": "Disabled because plain-text output can trigger invalid user prompt submit JSON output errors. Keep checkpoint reminders in Stop/session documentation instead."
+  },
   "mcp_policy": {
     "scope": "Codex-only",
     "enabled_local_stdio": [

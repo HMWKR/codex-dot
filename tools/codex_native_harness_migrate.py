@@ -355,7 +355,7 @@ check_hooks() {
     add_result "Hooks" "2-1" "hooks.json 유효성" "FAIL" "JSON 파싱 실패 또는 파일 없음" "SI"
     return
   fi
-  for event in SessionStart PreToolUse PostToolUse UserPromptSubmit Stop; do
+  for event in SessionStart PreToolUse PostToolUse Stop; do
     if grep -q "\"$event\"" "$file"; then
       add_result "Hooks" "2-$event" "$event 이벤트" "PASS" "이벤트 존재" "AC,SI"
     else
@@ -1121,17 +1121,6 @@ def write_hooks() -> None:
                             "timeout": 5,
                         }
                     ],
-                }
-            ],
-            "UserPromptSubmit": [
-                {
-                    "hooks": [
-                        {
-                            "type": "command",
-                            "command": "if [ -f checkpoint.md ]; then printf '[checkpoint] 이전 세션 체크포인트 발견 - checkpoint.md를 읽고 작업을 이어가세요.\\n'; fi",
-                            "timeout": 5,
-                        }
-                    ]
                 }
             ],
             "Stop": [

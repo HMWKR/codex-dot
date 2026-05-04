@@ -75,7 +75,7 @@
       "area": "config",
       "name": "hooks.json parse",
       "status": "PASS",
-      "detail": "PostToolUse, PreToolUse, SessionStart, Stop, UserPromptSubmit"
+      "detail": "PostToolUse, PreToolUse, SessionStart, Stop"
     },
     {
       "area": "config",

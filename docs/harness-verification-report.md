@@ -22,7 +22,7 @@
 | encoding | Codex active harness Claude-residue boundary | PASS | no active residue outside allowlist; 9 historical/plugin references allowed |
 | skills | unique skill names | PASS | 49 unique names |
 | skills | Codex skill entrypoints | PASS | 49 skills have SKILL.md, frontmatter, and no runtime markers |
-| config | hooks.json parse | PASS | PostToolUse, PreToolUse, SessionStart, Stop, UserPromptSubmit |
+| config | hooks.json parse | PASS | PostToolUse, PreToolUse, SessionStart, Stop |
 | config | config.toml parse | PASS | /Users/leesungmin/.codex/config.toml |
 | config | codex_hooks enabled | PASS | /Users/leesungmin/.codex/config.toml |
 | config | agent thread cap | PASS | agents.max_threads = 128 |

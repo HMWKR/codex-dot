@@ -12,10 +12,13 @@
     "README.md",
     "docs/harness-boundary-classification.md",
     "docs/skill-asset-policy.md",
+    "docs/skills-index.md",
     "docs/codex-only-mcp-plugin-catalog.md",
     "docs/macos-terminal-codex-setup.md",
+    "docs/troubleshooting.md",
     "docs/release-checklist.md",
     "tools/codex_native_harness_migrate.py",
+    "tools/codex_skill_index.py",
     "tools/codex_harness_verify.py"
   ],
   "owned_targets": {
@@ -69,6 +72,13 @@
   "disabled_hook_events": {
     "UserPromptSubmit": "Disabled because plain-text output can trigger invalid user prompt submit JSON output errors. Keep checkpoint reminders in Stop/session documentation instead."
   },
+  "skills_index": {
+    "markdown": "docs/skills-index.md",
+    "json": "docs/skills-index.json",
+    "generator": "tools/codex_skill_index.py",
+    "source": "$HOME/.agents/skills",
+    "policy": "Index metadata and hashes only; do not copy full personal skill bodies into Git."
+  },
   "mcp_policy": {
     "scope": "Codex-only",
     "enabled_local_stdio": [
@@ -103,6 +113,10 @@
       "python3 tools/codex_native_harness_migrate.py --apply",
       "python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json"
     ],
+    "skill_index_refresh": [
+      "python3 tools/codex_skill_index.py",
+      "python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json"
+    ],
     "macos_terminal_codex_setup": [
       "If command -v codex points into AppTranslocation, copy Codex.app to /Applications/Codex.app.",
       "xattr -dr com.apple.quarantine /Applications/Codex.app",
@@ -124,6 +138,7 @@
   "quality_gates": [
     "UTF-8 strict with no U+FFFD in active Codex target",
     "Secret/PII preflight PASS",
+    "Skill index matches active $HOME/.agents/skills when local skills are present",
     "migration dry-run PASS",
     "restore dry-run PASS",
     "hook simulation PASS on local apply-capable environment",

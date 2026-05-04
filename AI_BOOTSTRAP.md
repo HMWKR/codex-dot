@@ -19,10 +19,13 @@ Read these files in order before editing or applying anything:
 3. `README.md`
 4. `docs/harness-boundary-classification.md`
 5. `docs/skill-asset-policy.md`
-6. `docs/codex-only-mcp-plugin-catalog.md`
-7. `docs/release-checklist.md`
-8. `tools/codex_native_harness_migrate.py`
-9. `tools/codex_harness_verify.py`
+6. `docs/skills-index.md`
+7. `docs/codex-only-mcp-plugin-catalog.md`
+8. `docs/troubleshooting.md`
+9. `docs/release-checklist.md`
+10. `tools/codex_native_harness_migrate.py`
+11. `tools/codex_skill_index.py`
+12. `tools/codex_harness_verify.py`
 
 ## Non-Negotiable Safety Rules
 
@@ -62,6 +65,12 @@ git clone https://github.com/HMWKR/codex-dot.git
 cd codex-dot
 python3 tools/codex_native_harness_migrate.py
 python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json
+```
+
+If local skills are present and the task is to refresh this repository's skill routing docs:
+
+```bash
+python3 tools/codex_skill_index.py
 ```
 
 If the user approves real application:
@@ -131,12 +140,14 @@ winget install PHP.PHP
 2. Read `codex-harness.manifest.json`.
 3. Explain the target paths and safety boundary to the user.
 4. Run migration dry-run.
-5. Run verifier.
-6. Report PASS/WARN/FAIL and any Windows/macOS-specific caveat.
-7. Ask for explicit approval before `--apply`.
-8. Apply only to Codex-owned paths.
-9. Re-run verifier.
-10. If this repo is under Git control, commit documentation or harness-control-plane changes separately from home runtime changes.
+5. Regenerate the skill index with `tools/codex_skill_index.py` when local skills are present.
+6. Run verifier.
+7. Report PASS/WARN/FAIL and any Windows/macOS-specific caveat.
+8. Use `docs/troubleshooting.md` before changing policy when hooks, skills, MCP, or terminal Codex fail.
+9. Ask for explicit approval before `--apply`.
+10. Apply only to Codex-owned paths.
+11. Re-run skill index and verifier.
+12. If this repo is under Git control, commit documentation or harness-control-plane changes separately from home runtime changes.
 
 ## Success Criteria
 
@@ -149,3 +160,5 @@ An AI agent has followed this contract when:
 - It preserves UTF-8 and rejects replacement characters in active Codex targets.
 - It does not install or authenticate third-party MCP providers without user approval.
 - It distinguishes macOS commands from Windows commands.
+- It keeps `docs/skills-index.md` and `docs/skills-index.json` in sync with active local skills when available.
+- It uses `docs/troubleshooting.md` for known hook, skill, MCP, terminal, and encoding failure modes.

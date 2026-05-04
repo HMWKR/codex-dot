@@ -234,3 +234,20 @@ P1 운영 보강을 추가했다.
 - IDE/LSP, 게임, 영상 편집, 앱 개발 후보를 도메인 프로파일로 정리했다.
 - MCP/plugin은 설치 목록이 아니라 Codex-only 선택 카탈로그로 유지한다.
 - 외부 MCP 자동 설치, provider config import, Claude 설정 수정은 계속 금지한다.
+
+## 2026-05-04 Batch 9
+
+개인 스킬 자산을 AI-first로 찾고 운영 문제를 빠르게 복구하기 위한 문서/검증 레이어를 추가했다.
+
+- `tools/codex_skill_index.py` 추가.
+- `docs/skills-index.md` 추가.
+- `docs/skills-index.json` 추가.
+- `docs/troubleshooting.md` 추가.
+- `tools/codex_harness_verify.py`가 skill index stale 여부를 검사한다.
+- `AI_BOOTSTRAP.md`, `README.md`, `codex-harness.manifest.json`, `docs/release-checklist.md`에 skill index와 troubleshooting 흐름을 연결했다.
+
+운영 판단:
+
+- 스킬 본문 전체는 개인 자산이므로 Git에 복사하지 않는다.
+- Git에는 스킬명, 설명, 카테고리, 우선순위, HOME-relative path, SHA-256만 둔다.
+- `UserPromptSubmit` JSON 출력 오류, 스킬 미로딩, MCP 분리, terminal Codex, `U+FFFD` 문제는 `docs/troubleshooting.md`에서 같은 순서로 진단한다.

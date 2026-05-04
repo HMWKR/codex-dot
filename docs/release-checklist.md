@@ -9,6 +9,7 @@
 ```bash
 python3 tools/codex_native_harness_migrate.py
 python3 tools/codex_harness_inventory.py --output docs/claude-corpus-inventory.md
+python3 tools/codex_skill_index.py
 python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json
 git status --short
 ```
@@ -18,6 +19,7 @@ git status --short
 - `docs/harness-verification-report.md`의 `FAIL`이 0개다.
 - 기본 migration 결과가 `dry_run: true`다.
 - Secret/PII preflight가 `PASS`다.
+- `docs/skills-index.md`와 `docs/skills-index.json`이 활성 스킬 root와 일치한다.
 - Restore dry-run이 `PASS`다.
 - Idempotency 검사가 `PASS`다.
 - `.claude/`, `.codex/`, `codex-harness-backups/`, checkpoint 파일이 Git 추적 대상에 없다.

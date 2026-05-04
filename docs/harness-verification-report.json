@@ -1,6 +1,6 @@
 {
   "summary": {
-    "pass": 27,
+    "pass": 28,
     "warn": 2,
     "fail": 0
   },
@@ -9,7 +9,7 @@
       "area": "workspace",
       "name": "UTF-8 and replacement characters",
       "status": "PASS",
-      "detail": "33 files checked"
+      "detail": "37 files checked"
     },
     {
       "area": "workspace",
@@ -33,7 +33,13 @@
       "area": "workspace",
       "name": "Secret/PII preflight",
       "status": "PASS",
-      "detail": "31 workspace text files scanned"
+      "detail": "35 workspace text files scanned"
+    },
+    {
+      "area": "skills",
+      "name": "AI skill index",
+      "status": "PASS",
+      "detail": "49 indexed skills matched active skill root"
     },
     {
       "area": "boundary",
@@ -129,7 +135,7 @@
       "area": "scripts",
       "name": "Python compile",
       "status": "PASS",
-      "detail": "7 files"
+      "detail": "8 files"
     },
     {
       "area": "scripts",

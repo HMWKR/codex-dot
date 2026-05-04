@@ -3,7 +3,7 @@
 ## Summary
 
 - Overall: `PASS`
-- PASS: 27
+- PASS: 28
 - WARN: 2
 - FAIL: 0
 
@@ -11,11 +11,12 @@
 
 | Area | Check | Status | Detail |
 |---|---|---|---|
-| workspace | UTF-8 and replacement characters | PASS | 33 files checked |
+| workspace | UTF-8 and replacement characters | PASS | 37 files checked |
 | workspace | HTML smoke parse | PASS | 2 html files parsed |
 | workspace | documentation sync | PASS | verification tool, report, and GitHub gate are documented |
 | workspace | AI bootstrap contract | PASS | AI entrypoint, manifest, macOS/Windows split, and safety gates are machine-checkable |
-| workspace | Secret/PII preflight | PASS | 31 workspace text files scanned |
+| workspace | Secret/PII preflight | PASS | 35 workspace text files scanned |
+| skills | AI skill index | PASS | 49 indexed skills matched active skill root |
 | boundary | Claude/Codex harness classification | PASS | Claude and Codex are separate active harnesses; repo defaults are non-mutating |
 | encoding | Codex active harness UTF-8 strict | PASS | 340 active Codex text files checked |
 | encoding | Claude reference replacement allowlist | WARN | known reference-only U+FFFD: /Users/leesungmin/.claude/skills/think-teams/skill.md |
@@ -31,7 +32,7 @@
 | config | hook command paths | PASS | 4 referenced absolute paths exist |
 | config | custom agents | PASS | 5 expected agents with expected sandbox modes |
 | config | local goals feature flag | PASS | goals under development true |
-| scripts | Python compile | PASS | 7 files |
+| scripts | Python compile | PASS | 8 files |
 | scripts | Shell syntax | PASS | 2 files |
 | hooks | hook simulations | PASS | safe allow, dangerous deny, checkpoint write in temp dir |
 | migration | dry-run | PASS | {<br>  "dry_run": true,<br>  "preflight_files": 670,<br>  "reference_replacement_characters": [<br>    "/Users/leesungmin/.claude/skills/think-teams/skill.md"<br>  ],<br>  "note": "Claude reference U+FFFD characters are allowed in dry-run; Codex active harness validation still fails if any remain after apply."<br>} |

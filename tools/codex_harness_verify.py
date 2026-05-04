@@ -225,9 +225,9 @@ def check_workspace_files(checks: list[Check]) -> None:
 
 def check_documentation_sync(checks: list[Check]) -> None:
     required = {
-        WORKSPACE / "README.md": ["AI_BOOTSTRAP.md", "codex-harness.manifest.json", "codex_harness_verify.py", "harness-verification-report.md", "external-harness-import-notes.md", "agents.max_threads", "harness-boundary-classification.md", "codex_domain_profile.py"],
-        WORKSPACE / "AI_BOOTSTRAP.md": ["macOS", "Windows", "dry-run", "--apply", "Do not modify `~/.claude`", "codex-harness.manifest.json"],
-        WORKSPACE / "codex-harness.manifest.json": ["ai_first", "owned_targets", "expected_hook_events", "mcp_policy", "macos_dry_run", "windows_dry_run"],
+        WORKSPACE / "README.md": ["AI_BOOTSTRAP.md", "codex-harness.manifest.json", "codex_harness_verify.py", "harness-verification-report.md", "external-harness-import-notes.md", "agents.max_threads", "harness-boundary-classification.md", "codex_domain_profile.py", "skills-index.md", "troubleshooting.md"],
+        WORKSPACE / "AI_BOOTSTRAP.md": ["macOS", "Windows", "dry-run", "--apply", "Do not modify `~/.claude`", "codex-harness.manifest.json", "skills-index.md", "troubleshooting.md"],
+        WORKSPACE / "codex-harness.manifest.json": ["ai_first", "owned_targets", "expected_hook_events", "mcp_policy", "macos_dry_run", "windows_dry_run", "skills_index"],
         WORKSPACE / "docs" / "github-workflow.md": ["codex_harness_verify.py", "harness-verification-report.md", "external-harness-import-notes.md", "release-checklist.md"],
         WORKSPACE / "docs" / "codex-native-rebuild-plan.md": ["harness-verification-report.md", "external-harness-import-notes.md", "harness-boundary-classification.md", "agents.max_threads", "goals", "FAIL"],
         WORKSPACE / "docs" / "migration-summary.md": ["codex_harness_verify.py", "Harness Verification Report", "external-harness-import-notes.md", "agents.max_threads"],
@@ -236,6 +236,9 @@ def check_documentation_sync(checks: list[Check]) -> None:
         WORKSPACE / "docs" / "harness-boundary-classification.md": ["Claude-native active harness", "Codex-native active harness", "Project control plane", "Codex-only apply policy"],
         WORKSPACE / "docs" / "release-checklist.md": ["Secret/PII preflight", "Restore dry-run", "Idempotency", "MCP"],
         WORKSPACE / "docs" / "macos-terminal-codex-setup.md": ["AppTranslocation", "/Applications/Codex.app", "/opt/homebrew/bin/codex", "codex mcp list"],
+        WORKSPACE / "docs" / "skills-index.md": ["Codex Skill Index", "Routing Rules", "Regenerate", "$HOME/.agents/skills"],
+        WORKSPACE / "docs" / "skills-index.json": ["schema_version", "skills_count", "entries", "$HOME/.agents/skills"],
+        WORKSPACE / "docs" / "troubleshooting.md": ["UserPromptSubmit", "skills-index.md", "codex mcp list", "AppTranslocation", "U+FFFD"],
         WORKSPACE / "docs" / "developer-domain-extension-review.md": ["IDE", "게임", "영상", "Codex-only"],
         WORKSPACE / "docs" / "codex-only-mcp-plugin-catalog.md": ["Codex-only", "MCP", "Plugin", "Reject"],
         WORKSPACE / "docs" / "domain-profiles" / "ide-devtool.md": ["Symbol graph", "Serena", "Codex-only"],
@@ -319,7 +322,7 @@ def check_ai_bootstrap_contract(checks: list[Check]) -> None:
         if not isinstance(read_order, list):
             issues.append(f"{manifest_path}: read_order must be a list")
         else:
-            required_order = ["AI_BOOTSTRAP.md", "codex-harness.manifest.json", "README.md", "tools/codex_native_harness_migrate.py", "tools/codex_harness_verify.py"]
+            required_order = ["AI_BOOTSTRAP.md", "codex-harness.manifest.json", "README.md", "docs/skills-index.md", "docs/troubleshooting.md", "tools/codex_native_harness_migrate.py", "tools/codex_skill_index.py", "tools/codex_harness_verify.py"]
             for item in required_order:
                 if item not in read_order:
                     issues.append(f"{manifest_path}: read_order missing {item!r}")
@@ -354,6 +357,10 @@ def check_ai_bootstrap_contract(checks: list[Check]) -> None:
         commands = manifest.get("commands")
         if not isinstance(commands, dict) or not commands.get("macos_dry_run") or not commands.get("windows_dry_run"):
             issues.append(f"{manifest_path}: commands must include macos_dry_run and windows_dry_run")
+
+        skills_index = manifest.get("skills_index")
+        if not isinstance(skills_index, dict) or skills_index.get("markdown") != "docs/skills-index.md" or skills_index.get("json") != "docs/skills-index.json":
+            issues.append(f"{manifest_path}: skills_index must point to docs/skills-index.md and docs/skills-index.json")
 
     if issues:
         add(checks, "workspace", "AI bootstrap contract", "FAIL", "; ".join(issues[:30]))
@@ -572,6 +579,78 @@ def check_skills(checks: list[Check]) -> None:
         add(checks, "skills", "Codex skill entrypoints", "FAIL", "; ".join(detail))
     else:
         add(checks, "skills", "Codex skill entrypoints", "PASS", f"{len(skill_dirs)} skills have SKILL.md, frontmatter, and no runtime markers")
+
+
+def check_skill_index(checks: list[Check], *, workspace_only: bool = False) -> None:
+    markdown_path = WORKSPACE / "docs" / "skills-index.md"
+    json_path = WORKSPACE / "docs" / "skills-index.json"
+    issues: list[str] = []
+
+    ok, markdown_text, error = read_utf8(markdown_path)
+    if not ok:
+        issues.append(f"{markdown_path}: {error}")
+        markdown_text = ""
+    elif "Codex Skill Index" not in markdown_text or "Routing Rules" not in markdown_text:
+        issues.append(f"{markdown_path}: missing required sections")
+
+    try:
+        payload = json.loads(json_path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001 - report index parse context.
+        payload = {}
+        issues.append(f"{json_path}: JSON parse failed {exc}")
+
+    entries = payload.get("entries") if isinstance(payload, dict) else None
+    if not isinstance(entries, list) or not entries:
+        issues.append(f"{json_path}: entries must be a non-empty list")
+        entries = []
+    else:
+        if payload.get("schema_version") != "1.0.0":
+            issues.append(f"{json_path}: schema_version must be 1.0.0")
+        if payload.get("source") != "$HOME/.agents/skills":
+            issues.append(f"{json_path}: source must be $HOME/.agents/skills")
+        if payload.get("skills_count") != len(entries):
+            issues.append(f"{json_path}: skills_count does not match entries length")
+        for entry in entries:
+            if not isinstance(entry, dict):
+                issues.append(f"{json_path}: entry must be an object")
+                continue
+            for field in ("directory", "name", "description", "category", "priority", "path", "sha256"):
+                if not entry.get(field):
+                    issues.append(f"{json_path}: entry missing {field}")
+            path_value = entry.get("path")
+            if isinstance(path_value, str) and not path_value.startswith("$HOME/.agents/skills/"):
+                issues.append(f"{json_path}: entry path must be HOME-relative for {entry.get('directory')}")
+
+    serialized = json.dumps(payload, ensure_ascii=False)
+    if "/Users/" in serialized:
+        issues.append(f"{json_path}: must not contain absolute user home paths")
+
+    if not workspace_only and SKILLS.exists() and entries:
+        indexed = {entry["directory"]: entry for entry in entries if isinstance(entry, dict) and isinstance(entry.get("directory"), str)}
+        actual_paths = {
+            skill_dir.name: skill_dir / "SKILL.md"
+            for skill_dir in sorted(path for path in SKILLS.iterdir() if path.is_dir())
+            if (skill_dir / "SKILL.md").exists()
+        }
+        missing = sorted(set(actual_paths) - set(indexed))
+        extra = sorted(set(indexed) - set(actual_paths))
+        stale = sorted(name for name, path in actual_paths.items() if name in indexed and indexed[name].get("sha256") != sha256(path))
+        if missing:
+            issues.append("missing from index: " + ", ".join(missing[:20]))
+        if extra:
+            issues.append("extra in index: " + ", ".join(extra[:20]))
+        if stale:
+            issues.append("stale hashes: " + ", ".join(stale[:20]))
+
+    if issues:
+        add(checks, "skills", "AI skill index", "FAIL", "; ".join(issues[:30]))
+    else:
+        detail = f"{len(entries)} indexed skills"
+        if workspace_only:
+            detail += " (workspace parse only)"
+        else:
+            detail += " matched active skill root"
+        add(checks, "skills", "AI skill index", "PASS", detail)
 
 
 def check_config_and_hooks(checks: list[Check]) -> None:
@@ -931,6 +1010,7 @@ def main() -> int:
     check_documentation_sync(checks)
     check_ai_bootstrap_contract(checks)
     check_secret_preflight(checks)
+    check_skill_index(checks, workspace_only=args.workspace_only)
     check_harness_boundary_classification(checks)
     if not args.workspace_only:
         check_target_encoding(checks)

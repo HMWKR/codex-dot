@@ -6,6 +6,42 @@ Codex-native harness control-plane repository.
 
 현재 방향은 단순 복사가 아니라, Claude-native 하네스의 의도와 워크플로우를 읽어 Codex-native 구현으로 별도 설계하는 것이다. Claude 환경은 수정하지 않고, Codex 적용은 명시적 `--apply`가 있을 때만 수행한다. 경계 기준은 `docs/harness-boundary-classification.md`가 우선한다.
 
+## AI-first 사용법
+
+AI 에이전트에게 이 저장소 URL만 주고 하네스를 맞추게 하려면 다음처럼 요청한다.
+
+```text
+https://github.com/HMWKR/codex-dot 를 기준으로 내 Codex 하네스를 맞춰줘.
+먼저 AI_BOOTSTRAP.md와 codex-harness.manifest.json을 읽고,
+clone → dry-run → validate → explicit apply 순서로 진행해.
+```
+
+AI가 가장 먼저 읽어야 할 파일:
+
+- `AI_BOOTSTRAP.md`: AI 실행 계약, macOS/Windows 분기, 금지 경계, 적용 순서.
+- `codex-harness.manifest.json`: 스킬/훅/에이전트/MCP/검증 기준의 machine-readable SSoT.
+- `docs/harness-boundary-classification.md`: Claude와 Codex를 섞지 않는 경계 기준.
+
+OS별 기본 흐름:
+
+```bash
+# macOS
+git clone https://github.com/HMWKR/codex-dot.git
+cd codex-dot
+python3 tools/codex_native_harness_migrate.py
+python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json
+```
+
+```powershell
+# Windows PowerShell
+git clone https://github.com/HMWKR/codex-dot.git
+Set-Location codex-dot
+py -3 tools/codex_native_harness_migrate.py
+py -3 tools/codex_harness_verify.py --workspace-only --markdown-output .\docs\harness-verification-report.md --json-output .\docs\harness-verification-report.json
+```
+
+실제 적용은 두 OS 모두 사용자가 명시적으로 승인한 뒤에만 실행한다. Windows native 적용은 hook command의 shell 호환성을 먼저 확인한다.
+
 ## 핵심 원칙
 
 - Claude-native active harness와 Codex-native active harness를 분리한다.
@@ -24,6 +60,8 @@ Codex-native harness control-plane repository.
 ## 구성
 
 ```text
+AI_BOOTSTRAP.md                    # AI 에이전트가 가장 먼저 읽을 실행 계약
+codex-harness.manifest.json         # 하네스 대상/검증/OS 분기 machine-readable manifest
 tools/
   codex_native_harness_migrate.py   # Codex 환경 적용 도구, 기본 dry-run
   codex_harness_inventory.py        # Claude/Codex 자산 인벤토리와 재구축 baseline 리포트

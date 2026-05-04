@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0.0",
+  "name": "codex-dot",
+  "repository": "https://github.com/HMWKR/codex-dot",
+  "purpose": "Codex-native harness control plane for AI-first dry-run, validation, and explicit apply.",
+  "ai_first": true,
+  "default_mode": "dry-run",
+  "apply_requires_explicit_user_approval": true,
+  "read_order": [
+    "AI_BOOTSTRAP.md",
+    "codex-harness.manifest.json",
+    "README.md",
+    "docs/harness-boundary-classification.md",
+    "docs/skill-asset-policy.md",
+    "docs/codex-only-mcp-plugin-catalog.md",
+    "docs/release-checklist.md",
+    "tools/codex_native_harness_migrate.py",
+    "tools/codex_harness_verify.py"
+  ],
+  "owned_targets": {
+    "macos_linux": {
+      "codex_home": "$HOME/.codex",
+      "skills_home": "$HOME/.agents/skills"
+    },
+    "windows": {
+      "codex_home": "%USERPROFILE%\\.codex",
+      "skills_home": "%USERPROFILE%\\.agents\\skills"
+    }
+  },
+  "forbidden_targets": [
+    "~/.claude",
+    "authentication files",
+    "session transcripts",
+    "plugin runtime caches",
+    "provider tokens"
+  ],
+  "active_harness_artifacts": {
+    "codex": [
+      "AGENTS.md",
+      "config.toml",
+      "hooks.json",
+      "agents/*.toml",
+      "rules/*",
+      "scripts/*"
+    ],
+    "skills": [
+      "*/SKILL.md"
+    ]
+  },
+  "expected_codex_config": {
+    "features.codex_hooks": true,
+    "features.goals": true,
+    "agents.max_threads": 128
+  },
+  "expected_custom_agents": {
+    "ce-reviewer": "read-only",
+    "codebase-explorer": "read-only",
+    "harness-evaluator": "read-only",
+    "infra-auditor": "read-only",
+    "thoughts-writer": "workspace-write"
+  },
+  "expected_hook_events": [
+    "PreToolUse",
+    "PostToolUse",
+    "SessionStart",
+    "UserPromptSubmit",
+    "Stop"
+  ],
+  "mcp_policy": {
+    "scope": "Codex-only",
+    "enabled_local_stdio": [
+      "computer-use",
+      "context7",
+      "firebase",
+      "laravel-boost",
+      "playwright",
+      "serena",
+      "xcodebuildmcp"
+    ],
+    "enabled_remote": [
+      "asana",
+      "github",
+      "gitlab",
+      "greptile",
+      "linear",
+      "slack",
+      "stripe",
+      "supabase",
+      "vercel"
+    ],
+    "authentication_is_per_provider": true,
+    "do_not_run_external_install_scripts": true
+  },
+  "commands": {
+    "macos_dry_run": [
+      "python3 tools/codex_native_harness_migrate.py",
+      "python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json"
+    ],
+    "macos_apply": [
+      "python3 tools/codex_native_harness_migrate.py --apply",
+      "python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json"
+    ],
+    "windows_dry_run": [
+      "py -3 tools/codex_native_harness_migrate.py",
+      "py -3 tools/codex_harness_verify.py --workspace-only --markdown-output .\\docs\\harness-verification-report.md --json-output .\\docs\\harness-verification-report.json"
+    ],
+    "windows_apply": [
+      "Inspect generated hook shell compatibility first.",
+      "Apply only after explicit user approval and any required Windows hook port."
+    ]
+  },
+  "quality_gates": [
+    "UTF-8 strict with no U+FFFD in active Codex target",
+    "Secret/PII preflight PASS",
+    "migration dry-run PASS",
+    "restore dry-run PASS",
+    "hook simulation PASS on local apply-capable environment",
+    "Git status clean before release",
+    "GitHub Actions workspace-only verifier PASS"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "summary": {
-    "pass": 26,
+    "pass": 27,
     "warn": 2,
     "fail": 0
   },
@@ -9,7 +9,7 @@
       "area": "workspace",
       "name": "UTF-8 and replacement characters",
       "status": "PASS",
-      "detail": "30 files checked"
+      "detail": "32 files checked"
     },
     {
       "area": "workspace",
@@ -25,9 +25,15 @@
     },
     {
       "area": "workspace",
+      "name": "AI bootstrap contract",
+      "status": "PASS",
+      "detail": "AI entrypoint, manifest, macOS/Windows split, and safety gates are machine-checkable"
+    },
+    {
+      "area": "workspace",
       "name": "Secret/PII preflight",
       "status": "PASS",
-      "detail": "28 workspace text files scanned"
+      "detail": "30 workspace text files scanned"
     },
     {
       "area": "boundary",
@@ -171,7 +177,7 @@
       "area": "github",
       "name": "Git status",
       "status": "PASS",
-      "detail": "?? .github/\n?? .gitignore\n?? README.md\n?? docs/\n?? tools/"
+      "detail": "clean worktree"
     }
   ]
 }

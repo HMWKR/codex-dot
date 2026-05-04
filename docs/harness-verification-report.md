@@ -3,7 +3,7 @@
 ## Summary
 
 - Overall: `PASS`
-- PASS: 26
+- PASS: 27
 - WARN: 2
 - FAIL: 0
 
@@ -11,10 +11,11 @@
 
 | Area | Check | Status | Detail |
 |---|---|---|---|
-| workspace | UTF-8 and replacement characters | PASS | 30 files checked |
+| workspace | UTF-8 and replacement characters | PASS | 32 files checked |
 | workspace | HTML smoke parse | PASS | 2 html files parsed |
 | workspace | documentation sync | PASS | verification tool, report, and GitHub gate are documented |
-| workspace | Secret/PII preflight | PASS | 28 workspace text files scanned |
+| workspace | AI bootstrap contract | PASS | AI entrypoint, manifest, macOS/Windows split, and safety gates are machine-checkable |
+| workspace | Secret/PII preflight | PASS | 30 workspace text files scanned |
 | boundary | Claude/Codex harness classification | PASS | Claude and Codex are separate active harnesses; repo defaults are non-mutating |
 | encoding | Codex active harness UTF-8 strict | PASS | 340 active Codex text files checked |
 | encoding | Claude reference replacement allowlist | WARN | known reference-only U+FFFD: /Users/leesungmin/.claude/skills/think-teams/skill.md |
@@ -38,7 +39,7 @@
 | migration | restore dry-run | PASS | manifest hash and Codex-owned path validation passed |
 | migration | inventory generation | PASS | ready 49, normalize 0 |
 | migration | Codex validator | WARN | validator passed with 23 warnings |
-| github | Git status | PASS | ?? .github/<br>?? .gitignore<br>?? README.md<br>?? docs/<br>?? tools/ |
+| github | Git status | PASS | clean worktree |
 
 ## Gate
 

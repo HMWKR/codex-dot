@@ -180,7 +180,12 @@ def exact_file_names(path: Path) -> set[str]:
 
 
 def check_workspace_files(checks: list[Check]) -> None:
-    paths = [WORKSPACE / "README.md", WORKSPACE / ".gitignore"]
+    paths = [
+        WORKSPACE / "README.md",
+        WORKSPACE / "AI_BOOTSTRAP.md",
+        WORKSPACE / "codex-harness.manifest.json",
+        WORKSPACE / ".gitignore",
+    ]
     paths += sorted((WORKSPACE / "docs").glob("*"))
     paths += sorted((WORKSPACE / "docs" / "templates").glob("*"))
     paths += sorted((WORKSPACE / "docs" / "domain-profiles").glob("*"))
@@ -219,7 +224,9 @@ def check_workspace_files(checks: list[Check]) -> None:
 
 def check_documentation_sync(checks: list[Check]) -> None:
     required = {
-        WORKSPACE / "README.md": ["codex_harness_verify.py", "harness-verification-report.md", "external-harness-import-notes.md", "agents.max_threads", "harness-boundary-classification.md", "codex_domain_profile.py"],
+        WORKSPACE / "README.md": ["AI_BOOTSTRAP.md", "codex-harness.manifest.json", "codex_harness_verify.py", "harness-verification-report.md", "external-harness-import-notes.md", "agents.max_threads", "harness-boundary-classification.md", "codex_domain_profile.py"],
+        WORKSPACE / "AI_BOOTSTRAP.md": ["macOS", "Windows", "dry-run", "--apply", "Do not modify `~/.claude`", "codex-harness.manifest.json"],
+        WORKSPACE / "codex-harness.manifest.json": ["ai_first", "owned_targets", "expected_hook_events", "mcp_policy", "macos_dry_run", "windows_dry_run"],
         WORKSPACE / "docs" / "github-workflow.md": ["codex_harness_verify.py", "harness-verification-report.md", "external-harness-import-notes.md", "release-checklist.md"],
         WORKSPACE / "docs" / "codex-native-rebuild-plan.md": ["harness-verification-report.md", "external-harness-import-notes.md", "harness-boundary-classification.md", "agents.max_threads", "goals", "FAIL"],
         WORKSPACE / "docs" / "migration-summary.md": ["codex_harness_verify.py", "Harness Verification Report", "external-harness-import-notes.md", "agents.max_threads"],
@@ -253,8 +260,107 @@ def check_documentation_sync(checks: list[Check]) -> None:
         add(checks, "workspace", "documentation sync", "PASS", "verification tool, report, and GitHub gate are documented")
 
 
+def check_ai_bootstrap_contract(checks: list[Check]) -> None:
+    bootstrap_path = WORKSPACE / "AI_BOOTSTRAP.md"
+    manifest_path = WORKSPACE / "codex-harness.manifest.json"
+    readme_path = WORKSPACE / "README.md"
+    issues: list[str] = []
+
+    ok, bootstrap_text, error = read_utf8(bootstrap_path)
+    if not ok:
+        issues.append(f"{bootstrap_path}: {error}")
+        bootstrap_text = ""
+
+    ok, readme_text, error = read_utf8(readme_path)
+    if not ok:
+        issues.append(f"{readme_path}: {error}")
+        readme_text = ""
+
+    if bootstrap_text:
+        for phrase in (
+            "Read Order",
+            "Non-Negotiable Safety Rules",
+            "macOS Path",
+            "Windows Path",
+            "Do not modify `~/.claude`",
+            "python3 tools/codex_native_harness_migrate.py --apply",
+            "py -3 tools/codex_native_harness_migrate.py",
+            "U+FFFD",
+        ):
+            if phrase not in bootstrap_text:
+                issues.append(f"{bootstrap_path}: missing {phrase!r}")
+
+    if readme_text:
+        for phrase in ("AI_BOOTSTRAP.md", "codex-harness.manifest.json", "clone → dry-run → validate → explicit apply", "Windows PowerShell"):
+            if phrase not in readme_text:
+                issues.append(f"{readme_path}: missing {phrase!r}")
+
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        manifest = {}
+        issues.append(f"{manifest_path}: JSON parse failed {exc}")
+
+    if manifest:
+        expected_scalars = {
+            "schema_version": "1.0.0",
+            "repository": "https://github.com/HMWKR/codex-dot",
+            "ai_first": True,
+            "default_mode": "dry-run",
+            "apply_requires_explicit_user_approval": True,
+        }
+        for key, expected in expected_scalars.items():
+            if manifest.get(key) != expected:
+                issues.append(f"{manifest_path}: expected {key}={expected!r}, got {manifest.get(key)!r}")
+
+        read_order = manifest.get("read_order")
+        if not isinstance(read_order, list):
+            issues.append(f"{manifest_path}: read_order must be a list")
+        else:
+            required_order = ["AI_BOOTSTRAP.md", "codex-harness.manifest.json", "README.md", "tools/codex_native_harness_migrate.py", "tools/codex_harness_verify.py"]
+            for item in required_order:
+                if item not in read_order:
+                    issues.append(f"{manifest_path}: read_order missing {item!r}")
+            for item in read_order:
+                if isinstance(item, str) and not (WORKSPACE / item).exists():
+                    issues.append(f"{manifest_path}: read_order file missing {item!r}")
+
+        owned_targets = manifest.get("owned_targets")
+        if not isinstance(owned_targets, dict):
+            issues.append(f"{manifest_path}: owned_targets must be an object")
+        else:
+            for os_key in ("macos_linux", "windows"):
+                if os_key not in owned_targets:
+                    issues.append(f"{manifest_path}: owned_targets missing {os_key!r}")
+
+        forbidden = manifest.get("forbidden_targets")
+        if not isinstance(forbidden, list) or "~/.claude" not in forbidden:
+            issues.append(f"{manifest_path}: forbidden_targets must include '~/.claude'")
+
+        expected_config = manifest.get("expected_codex_config")
+        if not isinstance(expected_config, dict) or expected_config.get("agents.max_threads") != 128 or expected_config.get("features.codex_hooks") is not True:
+            issues.append(f"{manifest_path}: expected_codex_config missing required Codex settings")
+
+        expected_events = manifest.get("expected_hook_events")
+        if set(expected_events or []) != REQUIRED_HOOK_EVENTS:
+            issues.append(f"{manifest_path}: expected_hook_events must match supported command hook events")
+
+        mcp_policy = manifest.get("mcp_policy")
+        if not isinstance(mcp_policy, dict) or mcp_policy.get("scope") != "Codex-only" or mcp_policy.get("do_not_run_external_install_scripts") is not True:
+            issues.append(f"{manifest_path}: mcp_policy must be Codex-only and reject external install scripts")
+
+        commands = manifest.get("commands")
+        if not isinstance(commands, dict) or not commands.get("macos_dry_run") or not commands.get("windows_dry_run"):
+            issues.append(f"{manifest_path}: commands must include macos_dry_run and windows_dry_run")
+
+    if issues:
+        add(checks, "workspace", "AI bootstrap contract", "FAIL", "; ".join(issues[:30]))
+    else:
+        add(checks, "workspace", "AI bootstrap contract", "PASS", "AI entrypoint, manifest, macOS/Windows split, and safety gates are machine-checkable")
+
+
 def check_secret_preflight(checks: list[Check]) -> None:
-    roots = [WORKSPACE / "README.md", WORKSPACE / ".gitignore", WORKSPACE / "docs", WORKSPACE / "tools", WORKSPACE / ".github"]
+    roots = [WORKSPACE / "README.md", WORKSPACE / "AI_BOOTSTRAP.md", WORKSPACE / "codex-harness.manifest.json", WORKSPACE / ".gitignore", WORKSPACE / "docs", WORKSPACE / "tools", WORKSPACE / ".github"]
     offenders: list[str] = []
     scanned = 0
     for root in roots:
@@ -819,6 +925,7 @@ def main() -> int:
     checks: list[Check] = []
     check_workspace_files(checks)
     check_documentation_sync(checks)
+    check_ai_bootstrap_contract(checks)
     check_secret_preflight(checks)
     check_harness_boundary_classification(checks)
     if not args.workspace_only:

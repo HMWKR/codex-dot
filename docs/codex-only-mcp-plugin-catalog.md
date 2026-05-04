@@ -23,6 +23,27 @@
 | Game Studio | browser game | 게임 프로젝트일 때 | playtest + canvas verification |
 | Build iOS/macOS | Apple app/tool | Xcode/Swift 프로젝트일 때 | build/run/debug command |
 
+## 현재 로컬 Codex 상태
+
+2026-05-04 기준 이 Mac의 Codex 설정에는 다음 MCP가 `enabled` 상태다.
+
+| 구분 | 항목 |
+|---|---|
+| Local stdio MCP | `computer-use`, `context7`, `firebase`, `laravel-boost`, `playwright`, `serena`, `xcodebuildmcp` |
+| Remote MCP | `asana`, `github`, `gitlab`, `greptile`, `linear`, `slack`, `stripe`, `supabase`, `vercel` |
+| Local runtime | `node`, `npm`, `npx`, `uvx`, `php` |
+
+로컬 실행 기반은 Homebrew로 보강했다.
+
+| Runtime | Version | 필요한 MCP |
+|---|---:|---|
+| Node.js | 25.9.0 | `context7`, `firebase`, `playwright`, `xcodebuildmcp` |
+| npm/npx | 11.12.1 | `npx` 기반 MCP |
+| uvx | 0.11.8 | `serena` |
+| PHP | 8.5.5 | `laravel-boost` |
+
+주의: 설치/활성화와 서비스별 로그인은 별개다. GitHub는 `gh auth login`과 `workflow` scope까지 확인했다. Asana, GitLab, Linear, Slack, Stripe, Supabase, Vercel 등은 각 서비스 작업을 시작할 때 해당 workspace 권한을 별도로 확인한다.
+
 ## P2 후보
 
 | 후보 | 용도 | 보류 이유 |

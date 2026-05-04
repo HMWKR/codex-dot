@@ -11,11 +11,11 @@
 
 | Area | Check | Status | Detail |
 |---|---|---|---|
-| workspace | UTF-8 and replacement characters | PASS | 32 files checked |
+| workspace | UTF-8 and replacement characters | PASS | 33 files checked |
 | workspace | HTML smoke parse | PASS | 2 html files parsed |
 | workspace | documentation sync | PASS | verification tool, report, and GitHub gate are documented |
 | workspace | AI bootstrap contract | PASS | AI entrypoint, manifest, macOS/Windows split, and safety gates are machine-checkable |
-| workspace | Secret/PII preflight | PASS | 30 workspace text files scanned |
+| workspace | Secret/PII preflight | PASS | 31 workspace text files scanned |
 | boundary | Claude/Codex harness classification | PASS | Claude and Codex are separate active harnesses; repo defaults are non-mutating |
 | encoding | Codex active harness UTF-8 strict | PASS | 340 active Codex text files checked |
 | encoding | Claude reference replacement allowlist | WARN | known reference-only U+FFFD: /Users/leesungmin/.claude/skills/think-teams/skill.md |

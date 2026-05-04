@@ -234,6 +234,7 @@ def check_documentation_sync(checks: list[Check]) -> None:
         WORKSPACE / "docs" / "external-harness-import-notes.md": ["Batch 4A", "Batch 4B", "Batch 4C", "Batch 4D"],
         WORKSPACE / "docs" / "harness-boundary-classification.md": ["Claude-native active harness", "Codex-native active harness", "Project control plane", "Codex-only apply policy"],
         WORKSPACE / "docs" / "release-checklist.md": ["Secret/PII preflight", "Restore dry-run", "Idempotency", "MCP"],
+        WORKSPACE / "docs" / "macos-terminal-codex-setup.md": ["AppTranslocation", "/Applications/Codex.app", "/opt/homebrew/bin/codex", "codex mcp list"],
         WORKSPACE / "docs" / "developer-domain-extension-review.md": ["IDE", "게임", "영상", "Codex-only"],
         WORKSPACE / "docs" / "codex-only-mcp-plugin-catalog.md": ["Codex-only", "MCP", "Plugin", "Reject"],
         WORKSPACE / "docs" / "domain-profiles" / "ide-devtool.md": ["Symbol graph", "Serena", "Codex-only"],

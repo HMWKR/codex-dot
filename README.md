@@ -84,6 +84,7 @@ docs/
   release-checklist.md               # GitHub 배포 전 Secret/Restore/Idempotency 게이트
   skill-asset-policy.md             # 스킬 자산 관리 원칙
   github-workflow.md                # GitHub 푸시/운영 절차
+  macos-terminal-codex-setup.md      # macOS 터미널 codex 명령 고정 설치 절차
 .gitignore                          # 런타임 상태와 백업 제외
 .github/workflows/verify.yml         # GitHub runner용 workspace-only 검증
 ```
@@ -119,3 +120,5 @@ python3 tools/codex_native_harness_migrate.py --apply
 GitHub 배포 전 최종 확인은 `docs/release-checklist.md`를 따른다. 이 체크리스트는 Secret/PII preflight, restore dry-run, migration idempotency, MCP 분리 원칙을 포함한다.
 
 개발 도메인별 시작점은 `docs/domain-profiles/`와 `docs/codex-only-mcp-plugin-catalog.md`에 둔다. `tools/codex_domain_profile.py`는 프로젝트 설명을 받아 IDE/app/game/media 프로파일과 Codex-only MCP/plugin 후보를 추천하는 읽기 전용 도구다.
+
+macOS 터미널에서 `codex` 명령을 안정적으로 쓰는 방법은 `docs/macos-terminal-codex-setup.md`에 기록한다. 현재 Mac은 `/Applications/Codex.app`과 `/opt/homebrew/bin/codex` symlink 기준으로 검증했다.

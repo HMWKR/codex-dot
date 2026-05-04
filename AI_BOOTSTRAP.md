@@ -77,6 +77,18 @@ Optional local runtime support for enabled MCP servers:
 brew install gh node uv php
 ```
 
+If `command -v codex` points into an `AppTranslocation` path, stabilize terminal usage before relying on the CLI:
+
+```bash
+ditto /path/to/AppTranslocation/.../Codex.app /Applications/Codex.app
+xattr -dr com.apple.quarantine /Applications/Codex.app
+ln -s /Applications/Codex.app/Contents/Resources/codex /opt/homebrew/bin/codex
+zsh -lc 'command -v codex'
+zsh -lc 'codex --version'
+```
+
+See `docs/macos-terminal-codex-setup.md` for the full macOS terminal setup.
+
 Use `gh auth login --web` for GitHub operations. Service-specific MCP authentication is separate and must be confirmed per provider.
 
 ## Windows Path
@@ -137,4 +149,3 @@ An AI agent has followed this contract when:
 - It preserves UTF-8 and rejects replacement characters in active Codex targets.
 - It does not install or authenticate third-party MCP providers without user approval.
 - It distinguishes macOS commands from Windows commands.
-

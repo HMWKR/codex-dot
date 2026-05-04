@@ -9,7 +9,7 @@
       "area": "workspace",
       "name": "UTF-8 and replacement characters",
       "status": "PASS",
-      "detail": "32 files checked"
+      "detail": "33 files checked"
     },
     {
       "area": "workspace",
@@ -33,7 +33,7 @@
       "area": "workspace",
       "name": "Secret/PII preflight",
       "status": "PASS",
-      "detail": "30 workspace text files scanned"
+      "detail": "31 workspace text files scanned"
     },
     {
       "area": "boundary",

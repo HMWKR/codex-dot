@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitHub 하네스 후보 분석 - Codex-native 기준</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5d6b7a;
+      --line: #d9e0e8;
+      --surface: #f7f9fb;
+      --surface-strong: #edf3f8;
+      --accent: #0f766e;
+      --accent-strong: #0b5c55;
+      --warn: #9a5b10;
+      --danger: #a23a3a;
+      --ok: #287a3e;
+      --blue: #255c99;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      line-height: 1.62;
+    }
+
+    a {
+      color: var(--accent-strong);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    code {
+      padding: 0.12rem 0.32rem;
+      border-radius: 4px;
+      color: #253246;
+      background: #edf1f5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    .page {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      min-height: 420px;
+      display: grid;
+      align-content: end;
+      padding: 72px 0 44px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--accent-strong);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 960px;
+      margin: 0;
+      font-size: clamp(2.15rem, 4vw, 4.5rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 840px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 44px;
+      align-items: start;
+      padding-top: 32px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 20px;
+      padding-right: 18px;
+      border-right: 1px solid var(--line);
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 0.86rem;
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .toc a:hover {
+      color: var(--accent-strong);
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.68rem;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 26px 0 10px;
+      font-size: 1.13rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 16px;
+      padding-left: 1.3rem;
+    }
+
+    li {
+      margin: 7px 0;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .band {
+      margin: 18px 0;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .ok {
+      border-color: #9dcca6;
+      background: #effaf2;
+    }
+
+    .warn {
+      border-color: #e2c184;
+      background: #fff8ec;
+    }
+
+    .danger {
+      border-color: #e2a4a4;
+      background: #fff1f1;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0 8px;
+    }
+
+    .metric {
+      min-height: 106px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .metric .num {
+      display: block;
+      color: var(--accent-strong);
+      font-size: 1.62rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .metric .label {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .matrix {
+      width: 100%;
+      margin: 18px 0;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    .matrix th {
+      background: var(--surface-strong);
+      font-size: 0.92rem;
+    }
+
+    .matrix td {
+      background: #ffffff;
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 0 5px 5px 0;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: var(--accent-strong);
+      background: #e7f3f0;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .tag.blue {
+      color: var(--blue);
+      background: #e7f0fb;
+    }
+
+    .tag.warn {
+      color: var(--warn);
+      background: #fff2d9;
+      border: 0;
+    }
+
+    .tag.danger {
+      color: var(--danger);
+      background: #ffe7e7;
+      border: 0;
+    }
+
+    .repo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .repo {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #ffffff;
+    }
+
+    .repo h3 {
+      margin-top: 0;
+    }
+
+    .repo p {
+      color: var(--muted);
+    }
+
+    .source-list li {
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        padding: 0 18px 60px;
+      }
+
+      .layout,
+      .repo-grid,
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+        padding: 0 0 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .hero {
+        min-height: 370px;
+        padding-top: 52px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <p class="eyebrow">External harness candidates</p>
+      <h1>GitHub 후보는 가져오는 대상이 아니라, 우리 하네스에 맞게 분해할 재료다</h1>
+      <p>
+        2026-05-04 기준으로 Codex active harness 상세 검증은 <code>FAIL 0</code>을 유지하고 있다.
+        이 문서는 그 다음 단계로, 외부 GitHub 하네스 후보를 우리 기준에 맞춰 읽고 어떤 부분만 선별 흡수할지 판단하기 위한 자료다.
+      </p>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="문서 목차">
+        <strong>목차</strong>
+        <a href="#gate">진입 게이트</a>
+        <a href="#ranking">우선순위</a>
+        <a href="#candidates">후보별 판단</a>
+        <a href="#conversion">흡수 방식</a>
+        <a href="#next">다음 작업</a>
+        <a href="#sources">출처</a>
+      </nav>
+
+      <main>
+        <section id="gate">
+          <h2>진입 게이트</h2>
+          <p class="lead">
+            외부 하네스는 우리의 Codex active harness를 보강하기 위한 참고 자료다. 그래서 외부 후보를 먼저 설치하거나 덮어쓰지 않는다.
+          </p>
+
+          <div class="metrics">
+            <div class="metric">
+              <span class="num">19</span>
+              <span class="label">상세 검증 PASS</span>
+            </div>
+            <div class="metric">
+              <span class="num">2</span>
+              <span class="label">문서화된 WARN</span>
+            </div>
+            <div class="metric">
+              <span class="num">0</span>
+              <span class="label">검증 FAIL</span>
+            </div>
+            <div class="metric">
+              <span class="num">49</span>
+              <span class="label">Codex-ready skills</span>
+            </div>
+          </div>
+
+          <div class="band ok">
+            <strong>판단 기준:</strong>
+            외부 후보는 설치 단위가 아니라 패턴 단위로 평가한다. 가져올 수 있는 것은 workflow, skill anatomy, 검증 규칙, 문서 템플릿, 상태 모델이다.
+            가져오지 않는 것은 인증, 세션, provider 설정, 홈 디렉터리 전체 덮어쓰기, 자동 install script다.
+          </div>
+
+          <div class="band">
+            <strong>상세 notes:</strong>
+            후보별 3-pass 판단과 실제 import batch 제안은 <code>docs/external-harness-import-notes.md</code>에 기록한다.
+          </div>
+        </section>
+
+        <section id="ranking">
+          <h2>우선순위</h2>
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>순위</th>
+                <th>후보</th>
+                <th>현재 신호</th>
+                <th>우리 하네스에 가져올 것</th>
+                <th>판정</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><a href="https://github.com/popup-studio-ai/bkit-codex">bkit-codex</a></td>
+                <td>PDCA + Context Engineering, 27 skills, MCP/state 모델</td>
+                <td>PDCA 문서 구조, phase gate, gap analysis, status model</td>
+                <td><span class="tag">우선 흡수</span></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td><a href="https://github.com/addyosmani/agent-skills">agent-skills</a></td>
+                <td>20 skills, lifecycle commands, verification/anti-rationalization 패턴</td>
+                <td>skill anatomy, quality gate, review/test/security 기준</td>
+                <td><span class="tag">선별 흡수</span></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td><a href="https://github.com/github/spec-kit">github/spec-kit</a></td>
+                <td>대규모 SDD 표준, 30+ integrations, skills mode</td>
+                <td>constitution, specify, plan, tasks, analyze 흐름</td>
+                <td><span class="tag">표준 참조</span></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td><a href="https://github.com/gotalab/cc-sdd">cc-sdd</a></td>
+                <td>Codex skills stable, 17-skill Kiro식 SDD 세트</td>
+                <td>requirements-design-tasks, EARS, TDD, independent review loop</td>
+                <td><span class="tag">P1 후보</span></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td><a href="https://github.com/Yeachan-Heo/oh-my-codex">oh-my-codex / OMX</a></td>
+                <td>Codex workflow layer, team/runtime/HUD 중심, 높은 community signal</td>
+                <td>운영 UX, 역할 키워드, state directory 아이디어</td>
+                <td><span class="tag warn">런타임은 보류</span></td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td><a href="https://github.com/mxyhi/ok-skills">ok-skills</a></td>
+                <td>38 reusable skills, AGENTS.md playbooks, portable layout</td>
+                <td>docs lookup, planning-with-files, gh-fix-ci 등 빈틈 보강</td>
+                <td><span class="tag">개별 선별</span></td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td><a href="https://github.com/feiskyer/codex-settings">codex-settings</a></td>
+                <td>Codex config, prompts, experimental skills</td>
+                <td>config/prompt 참고, provider 예시</td>
+                <td><span class="tag danger">덮어쓰기 금지</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="candidates">
+          <h2>후보별 판단</h2>
+          <div class="repo-grid">
+            <article class="repo">
+              <h3>bkit-codex</h3>
+              <p>
+                우리 하네스와 가장 잘 맞는다. 이미 `source-command-pdca`, `think-*`, `pipeline-orchestrator`가 있으므로
+                bkit의 PDCA phase gate와 status model을 그대로 설치하지 말고 우리 skill 문법에 맞춰 재작성한다.
+              </p>
+              <span class="tag">PDCA</span>
+              <span class="tag">CE</span>
+              <span class="tag">state model</span>
+            </article>
+
+            <article class="repo">
+              <h3>agent-skills</h3>
+              <p>
+                senior engineering workflow의 표현이 좋다. 특히 검증 증거, anti-rationalization, review/test/security gate는
+                우리 `infra-audit`, `security-audit`, QA 계열을 다듬는 기준으로 쓸 수 있다.
+              </p>
+              <span class="tag">quality gate</span>
+              <span class="tag">review</span>
+              <span class="tag">skill anatomy</span>
+            </article>
+
+            <article class="repo">
+              <h3>github/spec-kit</h3>
+              <p>
+                외부 표준으로 가장 강하다. 우리 하네스의 project-bootstrap, source-command-pdca, what-ce 흐름에
+                constitution, specify, plan, tasks, analyze 단계를 대응시킨다.
+              </p>
+              <span class="tag blue">SDD standard</span>
+              <span class="tag blue">templates</span>
+              <span class="tag blue">GitHub issues</span>
+            </article>
+
+            <article class="repo">
+              <h3>cc-sdd</h3>
+              <p>
+                Kiro식 requirements-design-tasks를 Codex skills로 안정 지원한다는 점이 좋다. 다만 우리의 subagent 정책과
+                충돌하지 않도록 autonomous implementation 부분은 행동 지침으로만 가져온다.
+              </p>
+              <span class="tag">EARS</span>
+              <span class="tag">TDD</span>
+              <span class="tag">independent review</span>
+            </article>
+
+            <article class="repo">
+              <h3>oh-my-codex / OMX</h3>
+              <p>
+                community signal은 매우 크지만 runtime layer가 무겁다. Codex App에서는 default path가 아니므로
+                `$team`, `$ralph`, `.omx/` 같은 개념을 우리 방식의 skill/subagent/playbook으로 번역하는 선에서 시작한다.
+              </p>
+              <span class="tag warn">runtime 보류</span>
+              <span class="tag warn">team UX 참고</span>
+            </article>
+
+            <article class="repo">
+              <h3>ok-skills</h3>
+              <p>
+                범용 skill 모음이다. 이미 우리에게 있는 문서/PDF/PPT/XLSX/브라우저 계열과 중복이 많으므로
+                없는 영역만 골라 import 후보로 둔다.
+              </p>
+              <span class="tag">portable skills</span>
+              <span class="tag">docs lookup</span>
+              <span class="tag">GitHub CI</span>
+            </article>
+
+            <article class="repo">
+              <h3>codex-settings</h3>
+              <p>
+                설정 예시는 유용하지만 설치 방식은 `~/.codex`를 통째로 바꾸는 흐름이라 우리 자산 보존 원칙과 맞지 않는다.
+                provider, prompt, skill discovery 설명만 참고한다.
+              </p>
+              <span class="tag danger">no overwrite</span>
+              <span class="tag danger">reference only</span>
+            </article>
+          </div>
+        </section>
+
+        <section id="conversion">
+          <h2>흡수 방식</h2>
+          <ol>
+            <li>외부 repo를 바로 설치하지 않고, 먼저 repo별 후보 노트를 만든다.</li>
+            <li>우리 기존 skill과 중복되는지 확인한다. 중복이면 외부 표현만 참고하고 skill을 새로 늘리지 않는다.</li>
+            <li>3-pass 검토를 적용한다: 원본 의도, Codex 매핑, 누락/충돌 검토.</li>
+            <li>반영 단위는 `SKILL.md`, `AGENTS.md` 규칙, 검증 스크립트, 문서 템플릿 중 하나로 작게 나눈다.</li>
+            <li>반영 뒤 `tools/codex_harness_verify.py`를 다시 실행하고 `FAIL: 0`을 유지한다.</li>
+          </ol>
+
+          <div class="band warn">
+            <strong>중요:</strong>
+            외부 GitHub 후보의 install script, provider 설정, MCP server, 홈 디렉터리 overwrite는 바로 실행하지 않는다.
+            우리는 외부 하네스를 받아들이는 쪽이 아니라, 우리 하네스를 기준으로 외부 패턴을 컴파일하는 쪽이다.
+          </div>
+        </section>
+
+        <section id="next">
+          <h2>다음 작업</h2>
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>단계</th>
+                <th>작업</th>
+                <th>산출물</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>bkit-codex와 agent-skills를 먼저 세부 비교한다.</td>
+                <td><code>docs/external-harness-import-notes.md</code> 작성 완료</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>PDCA/SDD/QA gate를 우리 기존 skill에 매핑한다.</td>
+                <td>Batch 4A-4D 순서로 진행</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>실제 반영 후보를 batch로 나누고 검증한다.</td>
+                <td><code>docs/harness-verification-report.md</code></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Git remote가 정해지면 commit/push 절차를 진행한다.</td>
+                <td>초기 commit, GitHub remote, push</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="sources">
+          <h2>출처</h2>
+          <ul class="source-list">
+            <li><a href="https://github.com/Yeachan-Heo/oh-my-codex">Yeachan-Heo/oh-my-codex</a></li>
+            <li><a href="https://github.com/popup-studio-ai/bkit-codex">popup-studio-ai/bkit-codex</a></li>
+            <li><a href="https://github.com/github/spec-kit">github/spec-kit</a></li>
+            <li><a href="https://github.com/gotalab/cc-sdd">gotalab/cc-sdd</a></li>
+            <li><a href="https://github.com/addyosmani/agent-skills">addyosmani/agent-skills</a></li>
+            <li><a href="https://github.com/mxyhi/ok-skills">mxyhi/ok-skills</a></li>
+            <li><a href="https://github.com/feiskyer/codex-settings">feiskyer/codex-settings</a></li>
+          </ul>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

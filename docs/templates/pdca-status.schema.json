@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex PDCA Status",
+  "type": "object",
+  "required": ["plan", "do", "check", "act"],
+  "additionalProperties": false,
+  "properties": {
+    "plan": {
+      "type": "object",
+      "required": ["goal", "success_criteria"],
+      "additionalProperties": false,
+      "properties": {
+        "goal": { "type": "string" },
+        "success_criteria": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "do": {
+      "type": "object",
+      "required": ["changes"],
+      "additionalProperties": false,
+      "properties": {
+        "changes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "required": ["commands", "result"],
+      "additionalProperties": false,
+      "properties": {
+        "commands": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "result": {
+          "type": "string",
+          "enum": ["pass", "warn", "fail", "not_run"]
+        }
+      }
+    },
+    "act": {
+      "type": "object",
+      "required": ["next_steps"],
+      "additionalProperties": false,
+      "properties": {
+        "next_steps": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

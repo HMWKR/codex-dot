@@ -1,0 +1,177 @@
+{
+  "summary": {
+    "pass": 26,
+    "warn": 2,
+    "fail": 0
+  },
+  "checks": [
+    {
+      "area": "workspace",
+      "name": "UTF-8 and replacement characters",
+      "status": "PASS",
+      "detail": "30 files checked"
+    },
+    {
+      "area": "workspace",
+      "name": "HTML smoke parse",
+      "status": "PASS",
+      "detail": "2 html files parsed"
+    },
+    {
+      "area": "workspace",
+      "name": "documentation sync",
+      "status": "PASS",
+      "detail": "verification tool, report, and GitHub gate are documented"
+    },
+    {
+      "area": "workspace",
+      "name": "Secret/PII preflight",
+      "status": "PASS",
+      "detail": "28 workspace text files scanned"
+    },
+    {
+      "area": "boundary",
+      "name": "Claude/Codex harness classification",
+      "status": "PASS",
+      "detail": "Claude and Codex are separate active harnesses; repo defaults are non-mutating"
+    },
+    {
+      "area": "encoding",
+      "name": "Codex active harness UTF-8 strict",
+      "status": "PASS",
+      "detail": "340 active Codex text files checked"
+    },
+    {
+      "area": "encoding",
+      "name": "Claude reference replacement allowlist",
+      "status": "WARN",
+      "detail": "known reference-only U+FFFD: /Users/leesungmin/.claude/skills/think-teams/skill.md"
+    },
+    {
+      "area": "encoding",
+      "name": "Codex active harness Claude-residue boundary",
+      "status": "PASS",
+      "detail": "no active residue outside allowlist; 9 historical/plugin references allowed"
+    },
+    {
+      "area": "skills",
+      "name": "unique skill names",
+      "status": "PASS",
+      "detail": "49 unique names"
+    },
+    {
+      "area": "skills",
+      "name": "Codex skill entrypoints",
+      "status": "PASS",
+      "detail": "49 skills have SKILL.md, frontmatter, and no runtime markers"
+    },
+    {
+      "area": "config",
+      "name": "hooks.json parse",
+      "status": "PASS",
+      "detail": "PostToolUse, PreToolUse, SessionStart, Stop, UserPromptSubmit"
+    },
+    {
+      "area": "config",
+      "name": "config.toml parse",
+      "status": "PASS",
+      "detail": "/Users/leesungmin/.codex/config.toml"
+    },
+    {
+      "area": "config",
+      "name": "codex_hooks enabled",
+      "status": "PASS",
+      "detail": "/Users/leesungmin/.codex/config.toml"
+    },
+    {
+      "area": "config",
+      "name": "agent thread cap",
+      "status": "PASS",
+      "detail": "agents.max_threads = 128"
+    },
+    {
+      "area": "config",
+      "name": "goals feature enabled",
+      "status": "PASS",
+      "detail": "[features].goals = true"
+    },
+    {
+      "area": "config",
+      "name": "hook event policy",
+      "status": "PASS",
+      "detail": "only supported command hooks with explicit timeouts"
+    },
+    {
+      "area": "config",
+      "name": "hook command paths",
+      "status": "PASS",
+      "detail": "4 referenced absolute paths exist"
+    },
+    {
+      "area": "config",
+      "name": "custom agents",
+      "status": "PASS",
+      "detail": "5 expected agents with expected sandbox modes"
+    },
+    {
+      "area": "config",
+      "name": "local goals feature flag",
+      "status": "PASS",
+      "detail": "goals under development true"
+    },
+    {
+      "area": "scripts",
+      "name": "Python compile",
+      "status": "PASS",
+      "detail": "7 files"
+    },
+    {
+      "area": "scripts",
+      "name": "Shell syntax",
+      "status": "PASS",
+      "detail": "2 files"
+    },
+    {
+      "area": "hooks",
+      "name": "hook simulations",
+      "status": "PASS",
+      "detail": "safe allow, dangerous deny, checkpoint write in temp dir"
+    },
+    {
+      "area": "migration",
+      "name": "dry-run",
+      "status": "PASS",
+      "detail": "{\n  \"dry_run\": true,\n  \"preflight_files\": 670,\n  \"reference_replacement_characters\": [\n    \"/Users/leesungmin/.claude/skills/think-teams/skill.md\"\n  ],\n  \"note\": \"Claude reference U+FFFD characters are allowed in dry-run; Codex active harness validation still fails if any remain after apply.\"\n}"
+    },
+    {
+      "area": "migration",
+      "name": "dry-run idempotency",
+      "status": "PASS",
+      "detail": "two default dry-runs returned the same JSON payload"
+    },
+    {
+      "area": "migration",
+      "name": "restore dry-run",
+      "status": "PASS",
+      "detail": "manifest hash and Codex-owned path validation passed"
+    },
+    {
+      "area": "migration",
+      "name": "inventory generation",
+      "status": "PASS",
+      "detail": "ready 49, normalize 0"
+    },
+    {
+      "area": "migration",
+      "name": "Codex validator",
+      "status": "WARN",
+      "detail": "validator passed with 23 warnings"
+    },
+    {
+      "area": "github",
+      "name": "Git status",
+      "status": "PASS",
+      "detail": "?? .github/\n?? .gitignore\n?? README.md\n?? docs/\n?? tools/"
+    }
+  ]
+}

@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Claude 자산 기반 Codex-native 하네스 재구축 가이드</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5d6b7a;
+      --line: #d8dee7;
+      --surface: #f7f8fa;
+      --surface-strong: #eef3f8;
+      --accent: #0f766e;
+      --accent-strong: #0b5c55;
+      --warn: #a15c08;
+      --danger: #a33434;
+      --ok: #2f7d32;
+      --blue: #2563a8;
+      --code: #243142;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      line-height: 1.62;
+    }
+
+    a {
+      color: var(--accent-strong);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    code {
+      color: var(--code);
+      background: #edf1f5;
+      padding: 0.12rem 0.32rem;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 1rem 0;
+      padding: 1rem;
+      color: #f7fafc;
+      background: #1f2937;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.5;
+    }
+
+    pre code {
+      color: inherit;
+      background: transparent;
+      padding: 0;
+    }
+
+    .page {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .hero {
+      min-height: 460px;
+      display: grid;
+      align-content: end;
+      padding: 72px 0 48px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--accent-strong);
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 920px;
+      font-size: clamp(2.2rem, 4.4vw, 4.8rem);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 820px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 44px;
+      align-items: start;
+      padding-top: 32px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 20px;
+      border-right: 1px solid var(--line);
+      padding-right: 18px;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 0.86rem;
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .toc a:hover {
+      color: var(--accent-strong);
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.7rem;
+      letter-spacing: 0;
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin: 28px 0 10px;
+      font-size: 1.16rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 16px;
+      padding-left: 1.3rem;
+    }
+
+    li {
+      margin: 7px 0;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .band {
+      margin: 22px 0;
+      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .band strong {
+      color: var(--ink);
+    }
+
+    .warning {
+      border-color: #e4bd7a;
+      background: #fff8ec;
+    }
+
+    .danger {
+      border-color: #e0a1a1;
+      background: #fff1f1;
+    }
+
+    .ok {
+      border-color: #9ccca4;
+      background: #effaf1;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0 8px;
+    }
+
+    .metric {
+      min-height: 106px;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .metric .num {
+      display: block;
+      font-size: 1.74rem;
+      line-height: 1;
+      font-weight: 800;
+      color: var(--accent-strong);
+    }
+
+    .metric .label {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .flow-step {
+      padding: 18px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent-strong);
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      table-layout: fixed;
+    }
+
+    .matrix th,
+    .matrix td {
+      vertical-align: top;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    .matrix th {
+      background: var(--surface-strong);
+      font-size: 0.92rem;
+    }
+
+    .matrix td {
+      background: #ffffff;
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 0 6px 6px 0;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #e8f3f1;
+      color: var(--accent-strong);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .tag.warn {
+      background: #fff2da;
+      color: var(--warn);
+    }
+
+    .tag.danger {
+      background: #ffe7e7;
+      color: var(--danger);
+    }
+
+    .tag.blue {
+      background: #e8f0fb;
+      color: var(--blue);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 18px 0;
+    }
+
+    .rule-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .rule {
+      padding: 14px 16px;
+      border-left: 4px solid var(--accent);
+      background: var(--surface);
+    }
+
+    .rule b {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .footer-note {
+      margin-top: 34px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        padding: 0 18px 60px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .toc {
+        position: static;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        padding: 0 0 16px;
+      }
+
+      .metrics,
+      .flow,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: 390px;
+        padding-top: 52px;
+      }
+    }
+
+    @media print {
+      .toc {
+        position: static;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      body {
+        color: #000;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <p class="eyebrow">Codex-native rebuild guide</p>
+      <h1>Claude와 Codex를 분리하고, Codex 하네스를 별도 설계한다</h1>
+      <p>
+        이 문서는 Claude 하네스와 Codex 하네스를 서로 독립된 active harness로 분류하고, Codex 환경에만 적용되는 skill, agent, hook, AGENTS 체계를 3번 검토해 구축하는 방법을 설명한다.
+      </p>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="문서 목차">
+        <strong>목차</strong>
+        <a href="#decision">핵심 결정</a>
+        <a href="#baseline">현재 기준 상태</a>
+        <a href="#architecture">하네스 경계</a>
+        <a href="#three-pass">3-Pass 검토</a>
+        <a href="#mapping">변환 매핑</a>
+        <a href="#asset-types">자산별 처리</a>
+        <a href="#skill-usage">스킬 호출 방식</a>
+        <a href="#agent-goals">Agent 한도와 Goal</a>
+        <a href="#validation">검증과 인코딩</a>
+        <a href="#workflow">작업 흐름</a>
+        <a href="#risks">위험과 대응</a>
+      </nav>
+
+      <main>
+        <section id="decision">
+          <h2>핵심 결정</h2>
+          <p class="lead">
+            Claude 하네스는 Claude-native active harness로 계속 유지하고, Codex 하네스는 Codex-native active harness로 별도 운영한다. 이 저장소가 실제로 설정하는 범위는 Codex 환경뿐이다.
+          </p>
+
+          <div class="band ok">
+            <strong>결론:</strong>
+            clone이나 기본 실행만으로 사용자의 홈 환경을 수정하지 않는다. 실제 적용은 <code>--apply</code>를 명시했을 때만 <code>~/.codex</code>와 <code>~/.agents/skills</code>에 수행한다.
+          </div>
+
+          <h3>왜 단순 복사가 부족한가</h3>
+          <ul>
+            <li>Claude slash command는 Codex skill trigger와 같은 런타임이 아니다.</li>
+            <li>Claude의 <code>AskUserQuestion</code>, <code>Task tool</code>, <code>TodoWrite</code>는 Codex에서 같은 이름으로 실행되지 않는다.</li>
+            <li><code>allowed-tools</code>, <code>argument-hint</code>, <code>user_invocable</code> 같은 frontmatter는 Codex 권한이나 호출 규칙이 아니다.</li>
+            <li>많은 원본 스킬이 <code>skill.md</code> 소문자 entrypoint를 사용한다. Codex에서는 <code>SKILL.md</code>로 안정화해야 한다.</li>
+            <li>macOS에서는 대소문자 비민감 파일시스템 때문에 <code>SKILL.md</code>처럼 읽혀도 실제 파일명이 <code>skill.md</code>일 수 있다.</li>
+          </ul>
+        </section>
+
+        <section id="baseline">
+          <h2>현재 기준 상태</h2>
+          <p>
+            인벤토리 도구 기준으로 Claude-native와 Codex-native 하네스는 다음 상태다. 이 숫자는 재구축 진행 상황을 측정하는 baseline이다.
+          </p>
+
+          <div class="metrics">
+            <div class="metric">
+              <span class="num">336</span>
+              <span class="label">Claude text files scanned</span>
+            </div>
+            <div class="metric">
+              <span class="num">49</span>
+              <span class="label">Codex active skill directories</span>
+            </div>
+            <div class="metric">
+              <span class="num">0</span>
+              <span class="label">Codex skills still using skill.md</span>
+            </div>
+            <div class="metric">
+              <span class="num">0</span>
+              <span class="label">Codex skills with Claude runtime markers</span>
+            </div>
+          </div>
+
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>항목</th>
+                <th>상태</th>
+                <th>의미</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Claude command files</td>
+                <td>5개</td>
+                <td><code>analyze</code>, <code>journal</code>, <code>orchestrate</code>, <code>pdca</code>, <code>rules</code></td>
+              </tr>
+              <tr>
+                <td>Claude agent files</td>
+                <td>5개</td>
+                <td>Codex custom agent TOML에 맞게 별도 구현됨</td>
+              </tr>
+              <tr>
+                <td>UTF-8 failures</td>
+                <td>0개</td>
+                <td>검사 대상 파일은 UTF-8 strict read 통과</td>
+              </tr>
+              <tr>
+                <td><code>U+FFFD</code></td>
+                <td>Claude-native 파일 1개</td>
+                <td><code>think-teams/skill.md</code>의 Claude 파일에 존재. Codex active harness에서는 문맥 복구됨</td>
+              </tr>
+              <tr>
+                <td>Frontmatter issue</td>
+                <td>0개</td>
+                <td>Batch 2에서 모든 최상위 skill의 <code>name</code>, <code>description</code> 검증을 통과</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="architecture">
+          <h2>하네스 경계</h2>
+          <p>
+            재구축은 한 방향 복사가 아니다. Claude와 Codex를 독립 환경으로 분류하고, Codex에서 필요한 구현만 Codex-native 형태로 작성하는 과정이다.
+          </p>
+
+          <div class="flow" aria-label="재구축 흐름">
+            <div class="flow-step">
+              <b>1. Claude-native active harness</b>
+              <p><code>~/.claude</code> 아래의 skills, commands, agents, hooks, scripts, settings, rules는 Claude 환경에서 계속 사용한다.</p>
+            </div>
+            <div class="flow-step">
+              <b>2. Review gate</b>
+              <p>Claude 의도, Codex 매핑, 누락/충돌을 3번 검토한다. 검토가 끝나기 전에는 Codex active harness를 고치지 않는다.</p>
+            </div>
+            <div class="flow-step">
+              <b>3. Codex-native active harness</b>
+              <p><code>~/.agents/skills</code>, <code>~/.codex/AGENTS.md</code>, agents, hooks, scripts로 별도 구현한다.</p>
+            </div>
+          </div>
+
+          <pre><code>Claude-native active harness
+  ~/.claude/skills
+  ~/.claude/commands
+  ~/.claude/agents
+  ~/.claude/hooks
+  ~/.claude/scripts
+  ~/.claude/settings*
+
+Codex-native active harness
+  ~/.agents/skills
+  ~/.codex/AGENTS.md
+  ~/.codex/agents
+  ~/.codex/hooks.json
+  ~/.codex/config.toml
+  ~/.codex/scripts
+
+Project control plane
+  tools/*
+  docs/*</code></pre>
+
+          <div class="band warning">
+            <strong>운영 규칙:</strong>
+            Claude 경로에는 쓰지 않는다. 이 저장소의 적용 도구는 Codex 경로에만 쓰며, 기본 실행은 dry-run이다. 실제 적용은 <code>--apply</code>를 명시해야 한다.
+          </div>
+        </section>
+
+        <section id="three-pass">
+          <h2>3-Pass 검토</h2>
+          <p>
+            사용자의 스킬은 자산급이므로 한 번 읽고 변환하지 않는다. 각 스킬 또는 설정 묶음은 최소 세 관점에서 확인한다.
+          </p>
+
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>Pass</th>
+                <th>목적</th>
+                <th>질문</th>
+                <th>산출물</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Pass 1</strong><br>원본 의도 추출</td>
+                <td>Claude Markdown을 그대로 읽고 원래 의도를 이해한다.</td>
+                <td>무엇을 자동화하려 했나? 언제 트리거되나? 어떤 산출물을 기대하나?</td>
+                <td>트리거, 목적, 워크플로우, 도구, 확인 지점, 산출물 요약</td>
+              </tr>
+              <tr>
+                <td><strong>Pass 2</strong><br>Codex 매핑</td>
+                <td>원본 의도를 Codex 기능으로 옮길 수 있는지 판단한다.</td>
+                <td>skill로 둘 것인가? custom agent인가? hook인가? script인가? 수동 절차인가?</td>
+                <td>Codex primitive 매핑표, 미지원 의미, fallback 전략</td>
+              </tr>
+              <tr>
+                <td><strong>Pass 3</strong><br>누락/충돌 검토</td>
+                <td>빠뜨린 규칙, 잘못 이해한 표현, 시스템 지침 충돌을 다시 찾는다.</td>
+                <td>Claude 전용 표현이 실행 지시로 남았나? 원본 철학이 손실됐나? 권한 모델이 오해됐나?</td>
+                <td>최종 rewrite checklist, residual risk, 보류 항목</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="rule-list">
+            <div class="rule">
+              <b>Pass 3 실패 시 되돌아가기</b>
+              문제가 발견되면 바로 쓰지 않는다. Pass 1 또는 Pass 2로 되돌아가 의도와 매핑을 다시 확인한다.
+            </div>
+            <div class="rule">
+              <b>검토 결과를 문서화</b>
+              변환 결과만 남기지 않는다. 왜 그렇게 바꿨는지 문서에 남겨야 다음 세션이 이어받을 수 있다.
+            </div>
+            <div class="rule">
+              <b>불명확하면 보류</b>
+              미지원 의미나 Claude 의도가 불명확한 경우 Codex active harness에 억지로 반영하지 않고 미확정 항목으로 둔다.
+            </div>
+          </div>
+        </section>
+
+        <section id="mapping">
+          <h2>변환 매핑</h2>
+          <p>
+            아래 매핑은 기계적인 문자열 치환이 아니라 의미 변환이다. 같은 단어라도 Codex에서 실행 의미가 다르면 행동 지침으로 낮추거나 다른 primitive로 옮긴다.
+          </p>
+
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>Claude-native 요소</th>
+                <th>Codex-native 구현</th>
+                <th>왜 이렇게 바꾸는가</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>CLAUDE.md</code></td>
+                <td><code>AGENTS.md</code></td>
+                <td>Codex는 AGENTS 지침 체계를 사용한다. 프로젝트별 지침도 같은 이름을 따른다.</td>
+              </tr>
+              <tr>
+                <td><code>~/.claude/skills</code></td>
+                <td><code>~/.agents/skills</code></td>
+                <td>사용자 스킬의 공식 위치를 Codex 기준으로 고정한다.</td>
+              </tr>
+              <tr>
+                <td><code>skill.md</code></td>
+                <td><code>SKILL.md</code></td>
+                <td>Codex 인덱싱 안정성을 위해 entrypoint 대문자를 표준으로 둔다.</td>
+              </tr>
+              <tr>
+                <td><code>/pdca</code>, <code>/think-teams</code></td>
+                <td><code>source-command-pdca 실행</code>, <code>think-teams 실행</code> 같은 자연어 호출</td>
+                <td>Claude slash command 런타임은 Codex skill 호출과 다르다.</td>
+              </tr>
+              <tr>
+                <td><code>$ARGUMENTS</code></td>
+                <td>현재 사용자 요청 또는 필요한 경우 짧은 질문</td>
+                <td>Codex에서 자동 치환되는 command argument가 아니다.</td>
+              </tr>
+              <tr>
+                <td><code>AskUserQuestion</code></td>
+                <td>필요한 경우 사용자에게 직접 질문</td>
+                <td>도구 호출 강제 대신 Codex 대화 흐름에 맞게 확인 지점을 둔다.</td>
+              </tr>
+              <tr>
+                <td><code>TodoWrite</code></td>
+                <td><code>update_plan</code></td>
+                <td>Codex의 계획/진행 상태 도구가 역할을 대체한다.</td>
+              </tr>
+              <tr>
+                <td><code>Task tool</code>, <code>Agent tool</code></td>
+                <td><code>spawn_agent</code> 정책 또는 순차 fallback</td>
+                <td>Codex subagent는 사용 조건, 권한, 위임 정책이 다르다.</td>
+              </tr>
+              <tr>
+                <td><code>tools</code> allowlist</td>
+                <td>developer instruction의 행동 가이드</td>
+                <td>Codex custom agent TOML의 권한 경계가 아니므로 보안 모델로 오해하면 안 된다.</td>
+              </tr>
+              <tr>
+                <td><code>PreCompact</code> prompt hook</td>
+                <td>Stop checkpoint, 수동 점검 skill, 문서화 절차</td>
+                <td>Codex hook lifecycle과 1:1 대응하지 않는다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="asset-types">
+          <h2>자산별 처리 방식</h2>
+
+          <h3>1. Skills</h3>
+          <p>
+            가장 중요한 자산이다. Claude skill은 Claude 환경에서 유지하고, Codex skill은 Codex 환경에 맞게 다시 쓴다.
+          </p>
+          <ul>
+            <li><code>SKILL.md</code> 대문자 entrypoint를 만든다.</li>
+            <li>frontmatter는 최소 <code>name</code>, <code>description</code>을 둔다.</li>
+            <li>description에는 한국어와 영어 트리거를 함께 넣는다.</li>
+            <li>본문의 Claude 전용 도구명은 Codex 행동 규칙으로 재작성한다.</li>
+            <li>긴 참조 자료는 <code>references/</code>로 분리해 progressive disclosure를 유지한다.</li>
+          </ul>
+
+          <h3>2. Commands</h3>
+          <p>
+            Claude command는 Codex에서 slash command로 직접 실행된다고 가정하지 않는다. 대신 <code>source-command-*</code> skill로 의미를 보존한다.
+          </p>
+          <pre><code>Claude:
+  ~/.claude/commands/pdca.md
+  invocation: /pdca &lt;target&gt;
+
+Codex:
+  ~/.agents/skills/source-command-pdca/SKILL.md
+  invocation: "source-command-pdca 실행", "PDCA Gap 검증해줘"</code></pre>
+
+          <h3>3. Agents</h3>
+          <p>
+            Claude agent Markdown은 Codex custom agent TOML로 변환한다. 읽기 전용 계열과 쓰기 가능 계열을 나누고, Claude tool allowlist는 권한이 아니라 의도 설명으로 남긴다.
+          </p>
+          <div class="two-col">
+            <div class="band">
+              <strong>Read-only 계열</strong>
+              <p><code>ce-reviewer</code>, <code>codebase-explorer</code>, <code>harness-evaluator</code>, <code>infra-auditor</code></p>
+            </div>
+            <div class="band">
+              <strong>Workspace-write 계열</strong>
+              <p><code>thoughts-writer</code>는 <code>.thoughts/</code> 생성 목적에 한해 쓰기 가능으로 둔다.</p>
+            </div>
+          </div>
+
+          <h3>4. Hooks와 Scripts</h3>
+          <p>
+            Codex에서 의미가 명확한 command hook만 활성화한다. prompt hook이나 lifecycle이 다른 hook은 자동 실행보다 수동 점검이나 skill로 보존한다.
+          </p>
+          <ul>
+            <li><code>PreToolUse</code>: 파괴적 명령, 루프, 위험 패턴 사전 검사</li>
+            <li><code>PostToolUse</code>: 실행 후 상태 기록</li>
+            <li><code>SessionStart</code>: 프로젝트 상태 요약</li>
+            <li><code>UserPromptSubmit</code>: checkpoint 존재 알림</li>
+            <li><code>Stop</code>: checkpoint 저장</li>
+          </ul>
+
+          <h3>5. Rules와 AGENTS</h3>
+          <p>
+            글로벌 지침은 짧게 유지하고, 상세 규칙은 <code>~/.codex/rules</code>와 <code>~/.agents/skills/_core</code>로 분리한다. 이것이 CE의 progressive disclosure 방식이다.
+          </p>
+        </section>
+
+        <section id="skill-usage">
+          <h2>스킬 호출 방식</h2>
+          <p>
+            Claude에서 가져온 스킬이 안 되는 것처럼 보이는 주된 이유는 파일 이전 실패가 아니라 호출 방식과 인덱싱 차이다.
+          </p>
+
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>기대</th>
+                <th>Codex에서의 실제 방식</th>
+                <th>예시</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Claude처럼 <code>/pdca</code> 입력</td>
+                <td>Codex skill name 또는 자연어 트리거 사용</td>
+                <td><code>source-command-pdca 실행해서 설계와 구현 gap 봐줘</code></td>
+              </tr>
+              <tr>
+                <td>이전 직후 새 스킬 자동 인식</td>
+                <td>현재 세션의 skill index가 갱신되지 않을 수 있음</td>
+                <td>새 Codex 세션을 열어 목록을 갱신</td>
+              </tr>
+              <tr>
+                <td><code>skill.md</code>도 동일하게 인식</td>
+                <td><code>SKILL.md</code>로 정규화하는 것이 안전</td>
+                <td><code>think-teams/SKILL.md</code></td>
+              </tr>
+              <tr>
+                <td>Claude tool 이름 그대로 실행</td>
+                <td>Codex 도구와 대화 정책에 맞게 재작성 필요</td>
+                <td><code>TodoWrite</code> 대신 <code>update_plan</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="band warning">
+            <strong>사용자 관점의 호출 원칙:</strong>
+            slash command 이름을 그대로 쓰기보다 “스킬 이름 + 목적”으로 말하는 것이 안정적이다. 예: <code>think-teams로 이 전략을 다각도 분석해줘</code>.
+          </div>
+        </section>
+
+        <section id="validation">
+          <h2 id="agent-goals">Agent 한도와 Goal</h2>
+          <p>
+            현재 custom agent 정의는 5개지만, 이것은 역할 정의 개수다. Codex 런타임의 동시 agent thread 운영 한도는 별도의 설정인 <code>agents.max_threads</code>로 제어한다.
+          </p>
+
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>항목</th>
+                <th>설정</th>
+                <th>의미</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Custom agent definitions</td>
+                <td>5개 TOML</td>
+                <td><code>ce-reviewer</code>, <code>codebase-explorer</code>, <code>harness-evaluator</code>, <code>infra-auditor</code>, <code>thoughts-writer</code></td>
+              </tr>
+              <tr>
+                <td>Agent thread cap</td>
+                <td><code>agents.max_threads = 128</code></td>
+                <td>동시에 열 수 있는 agent thread 상한. 기본 fan-out 수가 아니라 운영 한도다.</td>
+              </tr>
+              <tr>
+                <td>Goal feature</td>
+                <td><code>features.goals = true</code></td>
+                <td>로컬 Codex CLI에서 <code>under development</code>로 확인된 장기 목표/재개 흐름 실험 기능이다.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="band warning">
+            <strong>운영 원칙:</strong>
+            128은 “항상 128개를 spawn한다”는 뜻이 아니다. 사용자가 명시적으로 병렬 위임을 요청하고, 작업을 독립적으로 쪼갤 수 있을 때만 필요한 만큼 사용한다.
+          </div>
+
+          <h2>검증과 인코딩</h2>
+          <p>
+            이 하네스는 한글과 긴 Markdown이 많다. 그래서 인코딩 검증은 부가 절차가 아니라 핵심 안전장치다.
+          </p>
+
+          <div class="two-col">
+            <div class="band">
+              <strong>적용 전</strong>
+              <ul>
+                <li>백업 생성</li>
+                <li>SHA-256 manifest 생성</li>
+                <li>UTF-8 strict read</li>
+                <li><code>U+FFFD</code> 검사</li>
+              </ul>
+            </div>
+            <div class="band">
+              <strong>적용 후</strong>
+              <ul>
+                <li>JSON/TOML parse</li>
+                <li>Python compile</li>
+                <li>Shell syntax check</li>
+                <li>Hook simulation</li>
+              </ul>
+            </div>
+          </div>
+
+          <pre><code>python3 tools/codex_harness_inventory.py --output docs/claude-corpus-inventory.md
+python3 tools/codex_native_harness_migrate.py
+python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json
+bash ~/.agents/skills/infra-audit/scripts/infra-audit.sh --quick</code></pre>
+
+          <div class="band danger">
+            <strong>중단 조건:</strong>
+            Codex active harness에 invalid UTF-8 또는 <code>U+FFFD</code>가 남으면 적용을 중단한다. Claude 파일에 이미 있던 깨짐은 Claude 환경을 수정하지 않고 Codex active harness에서만 문맥 복구한다.
+          </div>
+
+          <div class="band ok">
+            <strong>GitHub 전 게이트:</strong>
+            외부 GitHub 하네스 후보를 읽거나 push를 준비하기 전에 <code>docs/harness-verification-report.md</code>의 <code>FAIL</code>이 0개인지 확인한다. <code>WARN</code>은 Claude reference-only 깨짐, Codex validator 크기 경고, Git 초기화 전 상태처럼 원인과 허용 범위가 문서화된 경우에만 통과로 본다.
+          </div>
+        </section>
+
+        <section id="workflow">
+          <h2>작업 흐름</h2>
+          <p>
+            앞으로의 작업은 배치 단위로 진행한다. 배치 하나는 관련 스킬 묶음, 관련 agent, 관련 hook 또는 문서 묶음을 뜻한다.
+          </p>
+
+          <ol>
+            <li>인벤토리를 실행해 현재 상태를 확인한다.</li>
+            <li>이번 배치에서 참고할 Claude-native 파일과 수정할 Codex-native 파일을 고른다.</li>
+            <li>Pass 1, Pass 2, Pass 3 검토를 기록한다.</li>
+            <li>Codex active harness를 재작성한다.</li>
+            <li>관련 문서를 업데이트한다.</li>
+            <li>dry-run, 인벤토리, 상세 검증 게이트를 실행한다.</li>
+            <li>새 Codex 세션에서 trigger 동작을 확인한다.</li>
+            <li>GitHub에 올릴 변경 묶음을 정리한다.</li>
+          </ol>
+
+          <h3>추천 우선순위</h3>
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>우선순위</th>
+                <th>대상</th>
+                <th>이유</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="tag danger">P0</span></td>
+                <td><code>source-command-*</code></td>
+                <td>Batch 1에서 Codex-native skill로 재작성 완료. 이후 호출 예시와 실제 trigger 품질을 새 세션에서 확인한다.</td>
+              </tr>
+              <tr>
+                <td><span class="tag warn">P1</span></td>
+                <td><code>think-*</code>, <code>what*</code>, <code>cynefin</code>, <code>ooda</code></td>
+                <td>구조 정규화는 완료. 다음 단계는 3-pass로 의미와 진행 방식을 더 매끄럽게 다듬는 것이다.</td>
+              </tr>
+              <tr>
+                <td><span class="tag warn">P1</span></td>
+                <td><code>agent-teams-*</code>, <code>agent-architect</code></td>
+                <td>Codex subagent 정책과 충돌하지 않게 재설계해야 한다.</td>
+              </tr>
+              <tr>
+                <td><span class="tag blue">P2</span></td>
+                <td><code>infra-audit</code>, <code>security-audit</code>, QA 계열</td>
+                <td>재구축 품질을 검사하는 기준점이다.</td>
+              </tr>
+              <tr>
+                <td><span class="tag">P3</span></td>
+                <td>문서, 오피스, 배포, 웹 디자인 보조 스킬</td>
+                <td>핵심 하네스 안정화 이후 trigger와 산출물 중심으로 정규화한다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="risks">
+          <h2>위험과 대응</h2>
+
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>위험</th>
+                <th>왜 중요한가</th>
+                <th>대응</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>원본 의미 손실</td>
+                <td>스킬은 사용자의 작업 자산이다. 기능만 옮기면 판단 기준이 사라질 수 있다.</td>
+                <td>Claude-native 하네스와 Codex-native 하네스를 분리하고 3-pass 검토를 기록한다.</td>
+              </tr>
+              <tr>
+                <td>Codex 권한 모델 오해</td>
+                <td>Claude allowlist를 Codex 권한처럼 믿으면 안전 경계가 흐려진다.</td>
+                <td>allowlist는 행동 가이드로만 남기고 실제 권한은 Codex sandbox와 approval을 따른다.</td>
+              </tr>
+              <tr>
+                <td>스킬 인덱스 미갱신</td>
+                <td>파일을 고쳐도 현재 세션에서 바로 보이지 않을 수 있다.</td>
+                <td>새 세션에서 trigger를 확인하고, 문서에 호출 예시를 남긴다.</td>
+              </tr>
+              <tr>
+                <td>인코딩 깨짐</td>
+                <td>한글 스킬과 긴 Markdown에서 깨짐이 나면 자산 가치가 크게 훼손된다.</td>
+                <td>UTF-8 strict, <code>U+FFFD</code>, manifest 검증을 적용 전후로 실행한다.</td>
+              </tr>
+              <tr>
+                <td>과도한 자동 변환</td>
+                <td>문맥을 이해하지 못한 치환은 더 위험한 하네스를 만든다.</td>
+                <td>자동화는 인벤토리와 검증에 쓰고, 의미 변환은 batch별로 검토한다.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="footer-note">
+            기준 문서: <code>docs/rebuild-3pass-review.md</code>, <code>docs/codex-native-rebuild-plan.md</code>, <code>docs/skill-asset-policy.md</code>.
+          </p>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

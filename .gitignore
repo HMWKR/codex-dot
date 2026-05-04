@@ -1,0 +1,18 @@
+# Runtime state
+.claude/
+.codex/
+checkpoint.md
+session-handoff.md
+
+# Generated migration backups
+codex-harness-backups/
+
+# Python/cache artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/

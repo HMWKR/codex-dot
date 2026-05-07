@@ -1,0 +1,6 @@
+interface:
+  display_name: "Live Verify Loop"
+  short_description: "Repeat browser proof until live flows pass."
+  default_prompt: "Use $live-verify-loop to verify this app through real browser flows until the declared pass criteria are met."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codex Curated Skills 분석 카탈로그</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5d6b7a;
+      --line: #d8dee7;
+      --surface: #f7f9fb;
+      --surface-strong: #edf3f8;
+      --accent: #0f766e;
+      --accent-strong: #0b5c55;
+      --blue: #255c99;
+      --ok: #287a3e;
+      --warn: #9a5b10;
+      --danger: #a23a3a;
+      --code: #243142;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      line-height: 1.62;
+    }
+
+    a {
+      color: var(--accent-strong);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    code {
+      padding: 0.12rem 0.32rem;
+      border-radius: 4px;
+      color: var(--code);
+      background: #edf1f5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    .page {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .hero {
+      min-height: 440px;
+      display: grid;
+      align-content: end;
+      padding: 72px 0 46px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--accent-strong);
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+
+    h1 {
+      max-width: 940px;
+      margin: 0;
+      font-size: clamp(2.15rem, 4.2vw, 4.6rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 830px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 44px;
+      align-items: start;
+      padding-top: 32px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 20px;
+      border-right: 1px solid var(--line);
+      padding-right: 18px;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 0.86rem;
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .toc a:hover {
+      color: var(--accent-strong);
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.68rem;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 28px 0 10px;
+      font-size: 1.14rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 16px;
+      padding-left: 1.3rem;
+    }
+
+    li {
+      margin: 7px 0;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .band {
+      margin: 18px 0;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .ok {
+      border-color: #9dcca6;
+      background: #effaf2;
+    }
+
+    .warn {
+      border-color: #e2c184;
+      background: #fff8ec;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0 8px;
+    }
+
+    .metric {
+      min-height: 106px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .metric .num {
+      display: block;
+      color: var(--accent-strong);
+      font-size: 1.62rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .metric .label {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .matrix {
+      width: 100%;
+      margin: 18px 0;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    .matrix th {
+      background: var(--surface-strong);
+      font-size: 0.88rem;
+    }
+
+    .matrix td {
+      background: #ffffff;
+    }
+
+    .skill {
+      padding: 28px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .skill:first-of-type {
+      border-top: 0;
+    }
+
+    .skill-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 14px;
+    }
+
+    .skill h3 {
+      margin-top: 0;
+      font-size: 1.34rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .analysis-cell {
+      min-height: 150px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .analysis-cell strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 0.92rem;
+    }
+
+    .analysis-cell p,
+    .analysis-cell li {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin: 18px 0;
+    }
+
+    .flow span {
+      min-height: 74px;
+      display: grid;
+      align-content: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: center;
+    }
+
+    .route-map {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .route {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .route strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .route p {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    footer {
+      padding-top: 28px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 880px) {
+      .layout,
+      .analysis-grid,
+      .route-map {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        padding: 0 0 18px;
+      }
+
+      .metrics,
+      .flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .skill-head {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        padding: 0 18px 64px;
+      }
+
+      .hero {
+        min-height: 380px;
+      }
+
+      .metrics,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <p class="eyebrow">Codex Harness Asset</p>
+      <h1>Curated Skills 분석 카탈로그</h1>
+      <p>
+        이번 섹션에서 만든 10개 Codex-native 스킬을 목적, 트리거, 질문 포인트,
+        실행 흐름, 산출물, 주의점 기준으로 분석한 운영 문서다. `$what`은 새로 만든 스킬이 아니라
+        행동 계약 테스트의 골든 레퍼런스로 사용한다.
+      </p>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="문서 목차">
+        <strong>목차</strong>
+        <a href="#summary">요약</a>
+        <a href="#routing">라우팅 지도</a>
+        <a href="#skill-analysis">스킬별 분석</a>
+        <a href="#verification-family">검증 계열 비교</a>
+        <a href="#behavior-contract">행동 계약</a>
+        <a href="#operations">운영 기준</a>
+      </nav>
+
+      <main>
+        <section id="summary">
+          <h2>요약</h2>
+          <p class="lead">
+            이 10개 스킬은 계획을 날카롭게 만들고, 제품 요구사항으로 정리하고, 테스트 주도 구현과 진단을 수행하고,
+            실제 브라우저 검증과 기록까지 이어지도록 만든 작은 운영 체계다.
+          </p>
+
+          <div class="metrics">
+            <div class="metric">
+              <span class="num">10</span>
+              <span class="label">curated Codex-native skills</span>
+            </div>
+            <div class="metric">
+              <span class="num">35</span>
+              <span class="label">behavior contract scenarios</span>
+            </div>
+            <div class="metric">
+              <span class="num">3</span>
+              <span class="label">main operating bands: shape, build, verify</span>
+            </div>
+            <div class="metric">
+              <span class="num">0</span>
+              <span class="label">behavior contract failures at creation time</span>
+            </div>
+          </div>
+
+          <div class="band ok">
+            <strong>핵심 판단</strong>
+            <p>
+              이 스킬들은 “실행 지시 묶음”이 아니라 Codex가 언제 질문하고, 언제 멈추고, 어떤 도구를 우선해야 하는지
+              명시한 행동 계약이다. 따라서 새 스킬을 가져올 때도 파일 형식 검증만 보지 않고,
+              <code>tools/codex_skill_contract_verify.py</code>로 질문/중단/도구 우선순위까지 검증한다.
+            </p>
+          </div>
+        </section>
+
+        <section id="routing">
+          <h2>라우팅 지도</h2>
+          <p class="lead">
+            사용자의 요청은 보통 세 구간 중 하나로 들어온다. 모호한 계획은 shape 계열,
+            구현과 결함은 build/fix 계열, 실제 제품 증명과 반복 검증은 verify/record 계열로 보낸다.
+          </p>
+
+          <div class="route-map">
+            <div class="route">
+              <strong>Shape</strong>
+              <p><code>grill-me</code>는 질문으로 결정을 확정하고, <code>to-prd</code>는 확정된 맥락을 제품 요구사항으로 만든다.</p>
+            </div>
+            <div class="route">
+              <strong>Build / Fix</strong>
+              <p><code>tdd</code>는 한 행동씩 구현하고, <code>diagnose</code>는 재현 루프를 먼저 만든다. <code>improve-codebase-architecture</code>는 구조 후보를 찾는다.</p>
+            </div>
+            <div class="route">
+              <strong>Verify / Record</strong>
+              <p><code>live-verify-loop</code>, <code>ultradetail-walk</code>, <code>ultradetail-loop</code>, <code>harness-loop</code>, <code>cantos-write</code>가 실제 증명과 기록을 담당한다.</p>
+            </div>
+          </div>
+
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>상황</th>
+                <th>우선 스킬</th>
+                <th>이유</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>계획은 있는데 결정이 흐릿하다</td>
+                <td><code>grill-me</code></td>
+                <td>한 번에 하나의 결정 질문으로 불확실성을 줄인다.</td>
+              </tr>
+              <tr>
+                <td>대화나 기능 구상을 PRD로 만들고 싶다</td>
+                <td><code>to-prd</code></td>
+                <td>인터뷰를 기본값으로 하지 않고, 이미 있는 맥락을 제품 문서로 변환한다.</td>
+              </tr>
+              <tr>
+                <td>테스트를 먼저 두고 구현해야 한다</td>
+                <td><code>tdd</code></td>
+                <td>RED, GREEN, REFACTOR를 한 행동 단위로 반복한다.</td>
+              </tr>
+              <tr>
+                <td>원인 모를 실패나 성능 회귀가 있다</td>
+                <td><code>diagnose</code></td>
+                <td>수정 전에 재현 가능한 pass/fail 루프와 가설 경쟁을 만든다.</td>
+              </tr>
+              <tr>
+                <td>아키텍처 개선 후보를 찾고 싶다</td>
+                <td><code>improve-codebase-architecture</code></td>
+                <td>바로 리팩터링하지 않고 후보, 마찰, testability impact를 먼저 제시한다.</td>
+              </tr>
+              <tr>
+                <td>실제 브라우저에서 통과할 때까지 반복 검증해야 한다</td>
+                <td><code>live-verify-loop</code></td>
+                <td>code green과 live green을 분리하고 Browser Use 중심으로 증명한다.</td>
+              </tr>
+              <tr>
+                <td>페이지/플로우의 버튼과 persona를 한 번 전부 걸어야 한다</td>
+                <td><code>ultradetail-walk</code></td>
+                <td>한 번의 exhaustive discovery pass로 결함을 찾는다.</td>
+              </tr>
+              <tr>
+                <td>출시 전까지 walk, fix, re-walk를 반복해야 한다</td>
+                <td><code>ultradetail-loop</code></td>
+                <td>각 라운드마다 전체 walk를 다시 수행하는 고비용 release gate다.</td>
+              </tr>
+              <tr>
+                <td>명시적으로 에이전트/오케스트레이션을 요청했다</td>
+                <td><code>harness-loop</code></td>
+                <td>subagent 사용 권한, ownership, quality gate를 통제한다.</td>
+              </tr>
+              <tr>
+                <td>Cantos에 ADR, DDR, journal 기록이 필요하다</td>
+                <td><code>cantos-write</code></td>
+                <td>MCP 연결 여부를 확인하고 remote write와 local fallback을 구분한다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="skill-analysis">
+          <h2>스킬별 분석</h2>
+          <p class="lead">
+            각 분석은 운영자가 실제로 라우팅할 때 보는 기준이다. “무엇을 하는가”보다 더 중요한 것은
+            “언제 질문해야 하고, 무엇을 하면 안 되는가”다.
+          </p>
+
+          <article class="skill" id="grill-me">
+            <div class="skill-head">
+              <div>
+                <h3>1. grill-me</h3>
+                <p>모호한 계획을 실행 가능한 결정 상태로 바꾸는 질문형 스킬이다.</p>
+              </div>
+              <span class="badge">Shape / planning interview</span>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-cell">
+                <strong>역할</strong>
+                <p>한 번에 하나의 load-bearing decision을 질문한다. 계획 검증, 제품 아이디어 정리, 아키텍처 선택, 애매한 구현 요청에 적합하다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>사용자에게 물어볼 것</strong>
+                <ul>
+                  <li>성공 기준과 non-goal</li>
+                  <li>사용자/이해관계자의 행동</li>
+                  <li>데이터 모델, 외부 의존성, rollback</li>
+                </ul>
+              </div>
+              <div class="analysis-cell">
+                <strong>기대 산출물</strong>
+                <p><code>Goal</code>, confirmed decisions, constraints, risks, first implementation move를 담은 decision brief.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>주의점</strong>
+                <p>질문으로 해결할 수 있는 상황에서 바로 구현하지 않는다. repo에서 답을 알 수 있으면 먼저 <code>rg</code>와 파일 읽기로 확인한다.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="skill" id="to-prd">
+            <div class="skill-head">
+              <div>
+                <h3>2. to-prd</h3>
+                <p>대화, repo 맥락, 기능 논의를 제품 요구사항 문서로 바꾸는 스킬이다.</p>
+              </div>
+              <span class="badge">Shape / product document</span>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-cell">
+                <strong>역할</strong>
+                <p>이미 알려진 맥락을 PRD로 합성한다. 문제, 솔루션, 사용자 스토리, 구현 결정, 테스트 결정, out of scope를 분리한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>사용자에게 물어볼 것</strong>
+                <p>기본적으로 인터뷰하지 않는다. 다만 tracker 대상, 제품 결정, 공개 범위처럼 PRD가 크게 달라질 결정이 비어 있으면 한 가지 질문을 한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>기대 산출물</strong>
+                <p>제품 관점 PRD 또는 issue tracker용 본문. confirmed decision과 inferred decision을 구분해야 한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>주의점</strong>
+                <p>불안정한 파일 경로나 비밀 정보, private transcript를 PRD에 넣지 않는다. issue를 만들 때는 target repo/project를 확인한다.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="skill" id="tdd">
+            <div class="skill-head">
+              <div>
+                <h3>3. tdd</h3>
+                <p>한 번에 하나의 관찰 가능한 행동을 test-first로 구현하는 스킬이다.</p>
+              </div>
+              <span class="badge">Build / feedback loop</span>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-cell">
+                <strong>역할</strong>
+                <p>RED, GREEN, REFACTOR를 vertical slice로 반복한다. 모든 테스트를 먼저 상상해서 쓰는 방식이 아니라, 한 행동의 실패와 성공을 차례로 확인한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>사용자에게 물어볼 것</strong>
+                <p>public interface가 불명확할 때만 묻는다. 테스트 runner를 찾을 수 없거나, 의미 있는 테스트가 production credential을 요구하면 멈춘다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>기대 산출물</strong>
+                <p>실패하는 테스트, 최소 구현, green 상태, 필요한 리팩터링, 마지막 broader test command 결과.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>주의점</strong>
+                <p>내부 구조를 고정하는 brittle test를 피하고, refactor는 green 이후에만 수행한다. 사용자가 테스트 없는 구현을 명시하면 TDD 경로를 중단한다.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="skill" id="diagnose">
+            <div class="skill-head">
+              <div>
+                <h3>4. diagnose</h3>
+                <p>버그와 성능 회귀를 수정 전에 재현 루프와 가설로 좁히는 스킬이다.</p>
+              </div>
+              <span class="badge">Fix / diagnosis</span>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-cell">
+                <strong>역할</strong>
+                <p>“보고 고치기”를 금지하고, pass/fail loop를 만든 뒤 원인을 좁힌다. hard failure, intermittent bug, performance regression에 적합하다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>사용자에게 물어볼 것</strong>
+                <p>재현 루프를 만들 수 없을 때 logs, HAR, screen recording, fixture, 환경 접근 같은 captured artifact를 요청한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>기대 산출물</strong>
+                <p>재현 방법, 3-5개 ranked hypotheses, probe 결과, 최소 수정, regression test, confirmed cause, prevention opportunity.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>주의점</strong>
+                <p>여러 변수를 동시에 바꾸지 않는다. 임시 로그는 <code>[DEBUG-...]</code> 형태로 표시하고 완료 전에 제거한다.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="skill" id="improve-codebase-architecture">
+            <div class="skill-head">
+              <div>
+                <h3>5. improve-codebase-architecture</h3>
+                <p>구조 개선 후보를 찾고, testability와 locality 관점에서 우선순위를 잡는 스킬이다.</p>
+              </div>
+              <span class="badge">Architecture / candidate discovery</span>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-cell">
+                <strong>역할</strong>
+                <p>얕은 wrapper, tangled seam, 테스트 불가능한 흐름, AI가 탐색하기 어려운 구조를 찾아 후보로 제시한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>사용자에게 물어볼 것</strong>
+                <p>후보를 제시한 뒤 어떤 후보를 더 탐색할지 묻는다. full interface나 대규모 refactor는 사용자가 후보를 고른 뒤로 미룬다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>기대 산출물</strong>
+                <p>candidate name, files/modules, problem, solution direction, benefits, testability impact, ADR/context conflicts.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>주의점</strong>
+                <p>모든 abstraction을 좋은 것으로 취급하지 않는다. ADR을 가볍게 뒤집지 않고, 안정된 architectural reason이 있으면 기록을 제안한다.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="skill" id="live-verify-loop">
+            <div class="skill-head">
+              <div>
+                <h3>6. live-verify-loop</h3>
+                <p>코드 검증과 실제 브라우저 검증 사이의 gap을 반복적으로 닫는 스킬이다.</p>
+              </div>
+              <span class="badge">Verify / repeated live proof</span>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-cell">
+                <strong>역할</strong>
+                <p><code>code green != live green</code>을 기본 원칙으로 삼는다. 서버 health, live browser, data/API, code quality를 한 라운드로 묶는다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>사용자에게 물어볼 것</strong>
+                <ul>
+                  <li>target scope</li>
+                  <li>verification mode</li>
+                  <li>termination criteria</li>
+                  <li>tool plan</li>
+                  <li>round limits</li>
+                </ul>
+              </div>
+              <div class="analysis-cell">
+                <strong>기대 산출물</strong>
+                <p>각 라운드의 checks, fixed defects, browser/data evidence, criteria still failing, next action.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>주의점</strong>
+                <p>Browser Use가 live evidence를 만들 수 있으면 Playwright MCP를 요구하지 않는다. screenshot만으로 통과를 선언하지 않는다.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="skill" id="harness-loop">
+            <div class="skill-head">
+              <div>
+                <h3>7. harness-loop</h3>
+                <p>명시적으로 orchestration이 필요한 작업을 quality gate와 함께 진행하는 스킬이다.</p>
+              </div>
+              <span class="badge">Orchestration / quality gates</span>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-cell">
+                <strong>역할</strong>
+                <p>build, fix, audit, analyze, cleanup으로 작업을 분류하고, 필요한 경우에만 subagent를 쓰며, 결과를 검증한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>사용자에게 물어볼 것</strong>
+                <p>사용자가 delegation, agents, parallel work를 명시하지 않았는데 subagent가 꼭 필요해진 경우 중단하고 확인한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>기대 산출물</strong>
+                <p>selected mode, agents/local roles used, files changed, checks run, unresolved issues, next recommended round.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>주의점</strong>
+                <p>worker ownership은 겹치지 않게 하고, UI 변경은 Browser Use 우선으로 실증한다. static analysis만으로 UI proof를 대체하지 않는다.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="skill" id="cantos-write">
+            <div class="skill-head">
+              <div>
+                <h3>8. cantos-write</h3>
+                <p>Cantos MCP에 ADR, DDR, journal, visual evidence를 남기는 기록 스킬이다.</p>
+              </div>
+              <span class="badge">Record / durable knowledge</span>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-cell">
+                <strong>역할</strong>
+                <p>Cantos MCP가 연결되어 있으면 MCP-first로 기록하고, 연결되어 있지 않으면 local Markdown fallback을 명확히 구분한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>사용자에게 물어볼 것</strong>
+                <p>project registration이나 첫 remote write는 명시적 승인을 묻는다. MCP가 없을 때 local draft를 만들지 여부도 확인한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>기대 산출물</strong>
+                <p>ADR, DDR, journal 또는 project registration 결과. visual record는 route, viewport, evidence, decision, impact를 포함한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>주의점</strong>
+                <p>remote write가 안 됐는데 된 것처럼 말하지 않는다. Cantos 기록은 테스트나 live verification의 대체물이 아니다.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="skill" id="ultradetail-walk">
+            <div class="skill-head">
+              <div>
+                <h3>9. ultradetail-walk</h3>
+                <p>한 번의 깊은 persona walk로 route, element, adversarial defect를 찾는 스킬이다.</p>
+              </div>
+              <span class="badge">Verify / one-shot exhaustive walk</span>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-cell">
+                <strong>역할</strong>
+                <p>rendered once와 실제 persona walk를 구분한다. 모든 relevant button, link, input, menu, dialog, upload control을 walk한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>사용자에게 물어볼 것</strong>
+                <p>target routes, environment, user roles, test accounts, scope size, Cantos 기록 여부를 preflight에서 확인한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>기대 산출물</strong>
+                <p>personas walked, route and element coverage, findings table, severity, reproduction, evidence, suggested owner, live-verify handoff 후보.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>주의점</strong>
+                <p>결함을 고치는 loop가 아니다. 넓은 범위에서는 defect category와 persona를 2-4개 옵션으로 제시하고 조정받는다.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="skill" id="ultradetail-loop">
+            <div class="skill-head">
+              <div>
+                <h3>10. ultradetail-loop</h3>
+                <p>walk, fix, re-walk를 라운드 단위로 반복하는 고비용 release gate 스킬이다.</p>
+              </div>
+              <span class="badge">Verify / release convergence</span>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-cell">
+                <strong>역할</strong>
+                <p><code>ultradetail-walk</code>의 깊이와 <code>live-verify-loop</code>의 반복성을 결합한다. 출시 전 critical flow와 multi-role system에 적합하다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>사용자에게 물어볼 것</strong>
+                <p>target scope, roles, destructive-flow boundary, hard limits, stagnation limit, per-round evidence expectation을 확인한다.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>기대 산출물</strong>
+                <p>round별 personas, routes, findings, fixes, checks rerun, remaining defects, stop/continue decision.</p>
+              </div>
+              <div class="analysis-cell">
+                <strong>주의점</strong>
+                <p>간단한 failing test나 작은 PR에는 과하다. 같은 defect가 세 번 살아남으면 재설계나 범위 축소를 검토한다.</p>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section id="verification-family">
+          <h2>검증 계열 비교</h2>
+          <p class="lead">
+            <code>live-verify-loop</code>, <code>ultradetail-walk</code>, <code>ultradetail-loop</code>는 비슷해 보이지만 비용과 목적이 다르다.
+            잘못 라우팅하면 너무 얕거나 너무 비싼 검증이 된다.
+          </p>
+
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>스킬</th>
+                <th>검증 깊이</th>
+                <th>반복성</th>
+                <th>주요 질문</th>
+                <th>언제 피할까</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>live-verify-loop</code></td>
+                <td>critical journey 중심</td>
+                <td>반복 fix/verify</td>
+                <td>무엇이 통과되면 멈출까?</td>
+                <td>모든 요소를 한 번씩 다 눌러야 할 때</td>
+              </tr>
+              <tr>
+                <td><code>ultradetail-walk</code></td>
+                <td>persona와 interactive element exhaustive pass</td>
+                <td>one-shot discovery</td>
+                <td>어떤 persona와 category로 걸을까?</td>
+                <td>결함 수정까지 반복해야 할 때</td>
+              </tr>
+              <tr>
+                <td><code>ultradetail-loop</code></td>
+                <td>매 라운드 exhaustive walk</td>
+                <td>반복 walk/fix/walk</td>
+                <td>몇 라운드와 어떤 stop condition을 둘까?</td>
+                <td>작은 버그, 단일 페이지 smoke check, 비용이 중요한 작업</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="flow" aria-label="검증 도구 우선순위">
+            <span>Terminal<br>server, tests, logs</span>
+            <span>Browser Use<br>default live proof</span>
+            <span>Computer Use<br>desktop/browser state</span>
+            <span>Playwright/scripts<br>deterministic checks</span>
+            <span>Cantos<br>records when connected</span>
+          </div>
+        </section>
+
+        <section id="behavior-contract">
+          <h2>행동 계약</h2>
+          <p class="lead">
+            각 스킬은 사람이 읽기 좋은 문서이면서, 동시에 모델이 지켜야 할 계약이다.
+            이번 작업에서는 이 계약을 별도 검증기로 고정했다.
+          </p>
+
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>검사 항목</th>
+                <th>의미</th>
+                <th>실패 시 영향</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Trigger terms</td>
+                <td>언제 스킬을 호출해야 하는지 frontmatter와 본문에 드러나는가</td>
+                <td>스킬이 필요한 상황에서 로딩되지 않거나 과잉 호출된다.</td>
+              </tr>
+              <tr>
+                <td>Question / confirmation contract</td>
+                <td>사용자에게 무엇을 물어야 하는지와 언제 멈춰야 하는지가 명확한가</td>
+                <td>모호한 상태에서 작업이 진행되거나 `$what`류 확인 루프가 깨진다.</td>
+              </tr>
+              <tr>
+                <td>Tool priority</td>
+                <td>Terminal, Browser Use, Computer Use, Playwright/scripts, MCP의 우선순위가 맞는가</td>
+                <td>Codex Desktop에 맞지 않는 Playwright/MCP 의존으로 흐를 수 있다.</td>
+              </tr>
+              <tr>
+                <td>Stop conditions</td>
+                <td>credentials, destructive action, missing tooling, repeated failure 시 멈추는가</td>
+                <td>위험한 작업이나 비용 큰 루프가 무제한 진행될 수 있다.</td>
+              </tr>
+              <tr>
+                <td>Runtime residue</td>
+                <td>Claude 전용 runtime marker가 Codex 실행 지시로 남아 있지 않은가</td>
+                <td>Codex 하네스에서 실행 불가능한 지시가 섞인다.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="band">
+            <strong>현재 테스트 상태</strong>
+            <p>
+              <code>docs/skill-behavior-contract-tests.md</code> 기준으로 11개 계약과 35개 시나리오가 정의되어 있다.
+              여기에는 기존 <code>what</code> 골든 레퍼런스와 이번 curated 10개 스킬이 포함된다.
+            </p>
+          </div>
+        </section>
+
+        <section id="operations">
+          <h2>운영 기준</h2>
+          <p class="lead">
+            새 스킬을 가져오거나 기존 스킬을 고칠 때는 아래 순서로 다룬다.
+          </p>
+
+          <ol>
+            <li>원본 의도와 Codex 매핑을 분리한다.</li>
+            <li><code>codex/skills/&lt;skill&gt;/SKILL.md</code>에 Codex-native 원본을 둔다.</li>
+            <li>질문, 중단, 도구 우선순위, 산출물을 행동 계약 시나리오로 추가한다.</li>
+            <li><code>python3 tools/codex_skill_contract_verify.py --markdown-output docs/skill-behavior-contract-tests.md --json-output docs/skill-behavior-contract-tests.json</code>를 실행한다.</li>
+            <li>필요할 때만 <code>python3 tools/codex_curated_skill_sync.py --apply</code>로 활성 스킬 루트에 동기화한다.</li>
+            <li>마지막에 <code>python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json</code>로 전체 게이트를 확인한다.</li>
+          </ol>
+
+          <div class="band warn">
+            <strong>주의</strong>
+            <p>
+              이 문서는 실제 headless 모델 응답을 채점한 결과가 아니라, 스킬 문서가 그런 행동을 충분히 강제하는지 분석한 결과다.
+              실제 모델 회귀 테스트가 필요하면 같은 시나리오를 Codex exec 기반 runner에 연결하는 다음 단계가 필요하다.
+            </p>
+          </div>
+        </section>
+
+        <footer>
+          Generated for the Codex-native harness. Source skills live under <code>codex/skills</code> and active copies are synced into <code>$HOME/.agents/skills</code>.
+        </footer>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -87,17 +87,17 @@ def category_for(directory: str, description: str) -> str:
         return "core"
     if directory.startswith("source-command-"):
         return "command-bridge"
-    if directory.startswith("think-") or directory in {"what", "what-ce", "cynefin", "ooda", "first-principles", "ce-advisor", "deep-analysis-mode"}:
+    if directory.startswith("think-") or directory in {"what", "what-ce", "cynefin", "ooda", "first-principles", "ce-advisor", "deep-analysis-mode", "grill-me"}:
         return "reasoning"
-    if directory.startswith("agent-teams") or directory in {"agent-architect", "pipeline-orchestrator", "project-bootstrapper", "project-kickstart", "continuous-qa-loop", "insight-sentinel"}:
+    if directory.startswith("agent-teams") or directory in {"agent-architect", "pipeline-orchestrator", "project-bootstrapper", "project-kickstart", "continuous-qa-loop", "insight-sentinel", "harness-loop"}:
         return "orchestration"
-    if directory.startswith("playwright") or directory in {"infra-audit", "security-audit", "webapp-testing", "web-design-guidelines"}:
+    if directory.startswith("playwright") or directory.startswith("ultradetail-") or directory in {"infra-audit", "security-audit", "webapp-testing", "web-design-guidelines", "diagnose", "tdd", "live-verify-loop"}:
         return "validation"
     if directory in {"docx", "pdf", "ppt-study", "xlsx"}:
         return "documents"
     if directory.startswith("vercel") or "next.js" in text or "react" in text:
         return "web-platform"
-    if directory in {"architect", "js-refactor-cleanup-skill", "unused-code-refactor-suggester", "domain-researcher", "domain-expert-analysis", "ux-pattern-researcher"}:
+    if directory in {"architect", "js-refactor-cleanup-skill", "unused-code-refactor-suggester", "domain-researcher", "domain-expert-analysis", "ux-pattern-researcher", "improve-codebase-architecture", "to-prd"}:
         return "engineering"
     return "support"
 

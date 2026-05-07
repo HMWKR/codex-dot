@@ -13,12 +13,15 @@
     "docs/harness-boundary-classification.md",
     "docs/skill-asset-policy.md",
     "docs/skills-index.md",
+    "docs/skill-behavior-contract-tests.md",
     "docs/codex-only-mcp-plugin-catalog.md",
     "docs/macos-terminal-codex-setup.md",
     "docs/troubleshooting.md",
     "docs/release-checklist.md",
     "tools/codex_native_harness_migrate.py",
+    "tools/codex_curated_skill_sync.py",
     "tools/codex_skill_index.py",
+    "tools/codex_skill_contract_verify.py",
     "tools/codex_harness_verify.py"
   ],
   "owned_targets": {
@@ -49,6 +52,9 @@
     ],
     "skills": [
       "*/SKILL.md"
+    ],
+    "curated_skills_source": [
+      "codex/skills/*/SKILL.md"
     ]
   },
   "expected_codex_config": {
@@ -78,6 +84,18 @@
     "generator": "tools/codex_skill_index.py",
     "source": "$HOME/.agents/skills",
     "policy": "Index metadata and hashes only; do not copy full personal skill bodies into Git."
+  },
+  "curated_skills": {
+    "source": "codex/skills",
+    "target": "$HOME/.agents/skills",
+    "sync_tool": "tools/codex_curated_skill_sync.py",
+    "policy": "Codex-native rewritten skills may be versioned here and copied to the active skill root only with explicit --apply."
+  },
+  "skill_behavior_contracts": {
+    "markdown": "docs/skill-behavior-contract-tests.md",
+    "json": "docs/skill-behavior-contract-tests.json",
+    "generator": "tools/codex_skill_contract_verify.py",
+    "policy": "Verify trigger, question, confirmation, tool-order, stop-condition, and runtime-residue language before treating imported skills as harness assets."
   },
   "mcp_policy": {
     "scope": "Codex-only",
@@ -117,6 +135,20 @@
       "python3 tools/codex_skill_index.py",
       "python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json"
     ],
+    "skill_contract_verify": [
+      "python3 tools/codex_skill_contract_verify.py --markdown-output docs/skill-behavior-contract-tests.md --json-output docs/skill-behavior-contract-tests.json",
+      "python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json"
+    ],
+    "curated_skill_sync": [
+      "python3 tools/codex_curated_skill_sync.py",
+      "python3 tools/codex_curated_skill_sync.py --apply",
+      "python3 tools/codex_skill_index.py"
+    ],
+    "active_skill_normalize": [
+      "python3 tools/codex_normalize_active_skill_agents.py <skill>",
+      "python3 tools/codex_normalize_active_skill_agents.py <skill> --apply",
+      "python3 tools/codex_skill_index.py"
+    ],
     "macos_terminal_codex_setup": [
       "If command -v codex points into AppTranslocation, copy Codex.app to /Applications/Codex.app.",
       "xattr -dr com.apple.quarantine /Applications/Codex.app",
@@ -139,6 +171,7 @@
     "UTF-8 strict with no U+FFFD in active Codex target",
     "Secret/PII preflight PASS",
     "Skill index matches active $HOME/.agents/skills when local skills are present",
+    "Skill behavior contracts PASS",
     "migration dry-run PASS",
     "restore dry-run PASS",
     "hook simulation PASS on local apply-capable environment",

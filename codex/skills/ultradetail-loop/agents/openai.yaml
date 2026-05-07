@@ -1,0 +1,6 @@
+interface:
+  display_name: "Ultradetail Loop"
+  short_description: "Repeat exhaustive walk, fix, and re-walk."
+  default_prompt: "Use $ultradetail-loop to repeat exhaustive persona walks, fix defects, and re-walk until the release gate is clean."
+policy:
+  allow_implicit_invocation: true

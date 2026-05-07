@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diagnose"
+  short_description: "Build a feedback loop before fixing bugs."
+  default_prompt: "Use $diagnose to debug this issue from repro to regression test."

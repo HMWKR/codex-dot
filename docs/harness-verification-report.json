@@ -1,7 +1,7 @@
 {
   "summary": {
-    "pass": 28,
-    "warn": 2,
+    "pass": 31,
+    "warn": 0,
     "fail": 0
   },
   "checks": [
@@ -9,13 +9,13 @@
       "area": "workspace",
       "name": "UTF-8 and replacement characters",
       "status": "PASS",
-      "detail": "37 files checked"
+      "detail": "76 files checked"
     },
     {
       "area": "workspace",
       "name": "HTML smoke parse",
       "status": "PASS",
-      "detail": "2 html files parsed"
+      "detail": "3 html files parsed"
     },
     {
       "area": "workspace",
@@ -33,13 +33,19 @@
       "area": "workspace",
       "name": "Secret/PII preflight",
       "status": "PASS",
-      "detail": "35 workspace text files scanned"
+      "detail": "74 workspace text files scanned"
     },
     {
       "area": "skills",
       "name": "AI skill index",
       "status": "PASS",
-      "detail": "49 indexed skills matched active skill root"
+      "detail": "59 indexed skills matched active skill root"
+    },
+    {
+      "area": "skills",
+      "name": "Skill behavior contracts",
+      "status": "PASS",
+      "detail": "11 contracts, 35 scenarios, fail 0, warn 0"
     },
     {
       "area": "boundary",
@@ -51,13 +57,13 @@
       "area": "encoding",
       "name": "Codex active harness UTF-8 strict",
       "status": "PASS",
-      "detail": "340 active Codex text files checked"
+      "detail": "370 active Codex text files checked"
     },
     {
       "area": "encoding",
       "name": "Claude reference replacement allowlist",
-      "status": "WARN",
-      "detail": "known reference-only U+FFFD: /Users/leesungmin/.claude/skills/think-teams/skill.md"
+      "status": "PASS",
+      "detail": "no Claude reference replacement characters"
     },
     {
       "area": "encoding",
@@ -69,13 +75,13 @@
       "area": "skills",
       "name": "unique skill names",
       "status": "PASS",
-      "detail": "49 unique names"
+      "detail": "59 unique names"
     },
     {
       "area": "skills",
       "name": "Codex skill entrypoints",
       "status": "PASS",
-      "detail": "49 skills have SKILL.md, frontmatter, and no runtime markers"
+      "detail": "59 skills have SKILL.md, frontmatter, and no runtime markers"
     },
     {
       "area": "config",
@@ -135,7 +141,7 @@
       "area": "scripts",
       "name": "Python compile",
       "status": "PASS",
-      "detail": "8 files"
+      "detail": "11 files"
     },
     {
       "area": "scripts",
@@ -153,7 +159,7 @@
       "area": "migration",
       "name": "dry-run",
       "status": "PASS",
-      "detail": "{\n  \"dry_run\": true,\n  \"preflight_files\": 670,\n  \"reference_replacement_characters\": [\n    \"/Users/leesungmin/.claude/skills/think-teams/skill.md\"\n  ],\n  \"note\": \"Claude reference U+FFFD characters are allowed in dry-run; Codex active harness validation still fails if any remain after apply.\"\n}"
+      "detail": "{\n  \"dry_run\": true,\n  \"preflight_files\": 700,\n  \"reference_replacement_characters\": [],\n  \"note\": \"Claude reference U+FFFD characters are allowed in dry-run; Codex active harness validation still fails if any remain after apply.\"\n}"
     },
     {
       "area": "migration",
@@ -171,13 +177,13 @@
       "area": "migration",
       "name": "inventory generation",
       "status": "PASS",
-      "detail": "ready 49, normalize 0"
+      "detail": "ready 59, normalize 0"
     },
     {
       "area": "migration",
       "name": "Codex validator",
-      "status": "WARN",
-      "detail": "validator passed with 23 warnings"
+      "status": "PASS",
+      "detail": "validator passed; 22 cache/reference warnings ignored"
     },
     {
       "area": "github",

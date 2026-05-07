@@ -1,0 +1,924 @@
+{
+  "schema_version": "1.0.0",
+  "generated_by": "tools/codex_skill_contract_verify.py",
+  "summary": {
+    "pass": 11,
+    "warn": 0,
+    "fail": 0,
+    "contracts": 11,
+    "scenarios": 35,
+    "workspace_only": false
+  },
+  "results": [
+    {
+      "skill": "what",
+      "source": "active",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger_boundary",
+          "status": "PASS",
+          "detail": "4 required terms found"
+        },
+        {
+          "name": "iron_law",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "announce",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "step_contract",
+          "status": "PASS",
+          "detail": "4 required terms found"
+        },
+        {
+          "name": "confirmation",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "repair",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "execution_choice",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "5 scenarios defined"
+        }
+      ],
+      "scenario_count": 5,
+      "scenarios": [
+        {
+          "name": "/what trigger",
+          "prompt": "/what 이 기능의 목적을 정리해줘",
+          "expected_first_move": "Announce then STEP 1 table only.",
+          "must_ask_or_confirm": "Ask whether the Why direction is right.",
+          "must_not": "Do not jump to What before user confirmation."
+        },
+        {
+          "name": "yes advances one step",
+          "prompt": "맞아",
+          "expected_first_move": "Advance only to the next pending step.",
+          "must_ask_or_confirm": "Ask for confirmation again at the new step.",
+          "must_not": "Do not collapse multiple steps into one response."
+        },
+        {
+          "name": "modify branch",
+          "prompt": "수정이 필요해",
+          "expected_first_move": "Offer concrete modification choices for the current step.",
+          "must_ask_or_confirm": "Ask which correction to apply.",
+          "must_not": "Do not repeat the same table unchanged."
+        },
+        {
+          "name": "backtrack",
+          "prompt": "이전 Why가 틀렸어",
+          "expected_first_move": "Announce that a prior step needs correction.",
+          "must_ask_or_confirm": "Ask whether to return to the earlier step or continue.",
+          "must_not": "Do not keep later steps as confirmed after backtracking."
+        },
+        {
+          "name": "skip framework",
+          "prompt": "그냥 해줘",
+          "expected_first_move": "Stop the framework and summarize confirmed context.",
+          "must_ask_or_confirm": "Confirm direct execution path if needed.",
+          "must_not": "Do not continue the four-step loop."
+        }
+      ]
+    },
+    {
+      "skill": "grill-me",
+      "source": "curated",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "question_contract",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "context_first",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "stop_guard",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "finish",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "3 scenarios defined"
+        },
+        {
+          "name": "active sync",
+          "status": "PASS",
+          "detail": "curated source files match active skill root"
+        }
+      ],
+      "scenario_count": 3,
+      "scenarios": [
+        {
+          "name": "fuzzy plan",
+          "prompt": "그릴미. 결제 기능 만들 계획 검증해줘",
+          "expected_first_move": "Restate plan and ask exactly one load-bearing question.",
+          "must_ask_or_confirm": "Include recommended answer and options.",
+          "must_not": "Do not implement payment code."
+        },
+        {
+          "name": "repo-answerable",
+          "prompt": "이 구조에서 인증 방식을 질문하면서 정리해줘",
+          "expected_first_move": "Inspect repo first when files can answer.",
+          "must_ask_or_confirm": "Ask only the unresolved decision.",
+          "must_not": "Do not ask questions already answerable from files."
+        },
+        {
+          "name": "implementation handoff",
+          "prompt": "이제 구현해줘",
+          "expected_first_move": "Convert final decision brief to plan when enough decisions exist.",
+          "must_ask_or_confirm": "Ask remaining critical question if still unresolved.",
+          "must_not": "Do not proceed while critical branches remain open."
+        }
+      ]
+    },
+    {
+      "skill": "to-prd",
+      "source": "curated",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "repo_context",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "ask_guard",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "publishing",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "quality",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "3 scenarios defined"
+        },
+        {
+          "name": "active sync",
+          "status": "PASS",
+          "detail": "curated source files match active skill root"
+        }
+      ],
+      "scenario_count": 3,
+      "scenarios": [
+        {
+          "name": "known context",
+          "prompt": "지금 대화를 PRD로 만들어줘",
+          "expected_first_move": "Synthesize the PRD from available context.",
+          "must_ask_or_confirm": "Ask only if a missing decision changes the PRD materially.",
+          "must_not": "Do not start a broad interview."
+        },
+        {
+          "name": "issue publishing",
+          "prompt": "이걸 GitHub issue용 PRD로 만들어줘",
+          "expected_first_move": "Prepare issue-shaped PRD and check target repo if ambiguous.",
+          "must_ask_or_confirm": "Confirm target when multiple repos/projects are plausible.",
+          "must_not": "Do not publish to the wrong tracker."
+        },
+        {
+          "name": "local draft",
+          "prompt": "docs에 PRD 파일로 남겨줘",
+          "expected_first_move": "Use existing docs/prd or product-docs location.",
+          "must_ask_or_confirm": "Ask if output path materially changes project convention.",
+          "must_not": "Do not use brittle source file promises."
+        }
+      ]
+    },
+    {
+      "skill": "tdd",
+      "source": "curated",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "loop",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ask_guard",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "planning",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "test_standard",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "3 scenarios defined"
+        },
+        {
+          "name": "active sync",
+          "status": "PASS",
+          "detail": "curated source files match active skill root"
+        }
+      ],
+      "scenario_count": 3,
+      "scenarios": [
+        {
+          "name": "feature request",
+          "prompt": "TDD로 검색 필터 추가해줘",
+          "expected_first_move": "Discover test runner and pick the first observable behavior.",
+          "must_ask_or_confirm": "Clarify public interface if ambiguous.",
+          "must_not": "Do not write all tests before implementation."
+        },
+        {
+          "name": "bug regression",
+          "prompt": "이 버그를 regression-first로 고쳐줘",
+          "expected_first_move": "Create a failing regression test first.",
+          "must_ask_or_confirm": "Ask if a stable behavior interface cannot be identified.",
+          "must_not": "Do not patch without watching the test fail."
+        },
+        {
+          "name": "no tests wanted",
+          "prompt": "그냥 구현만 해",
+          "expected_first_move": "Stop TDD path when user explicitly rejects tests.",
+          "must_ask_or_confirm": "Confirm direct implementation implications if needed.",
+          "must_not": "Do not force TDD against explicit user direction."
+        }
+      ]
+    },
+    {
+      "skill": "diagnose",
+      "source": "curated",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger",
+          "status": "PASS",
+          "detail": "4 required terms found"
+        },
+        {
+          "name": "loop_first",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ask_guard",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "hypotheses",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "cleanup",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "3 scenarios defined"
+        },
+        {
+          "name": "active sync",
+          "status": "PASS",
+          "detail": "curated source files match active skill root"
+        }
+      ],
+      "scenario_count": 3,
+      "scenarios": [
+        {
+          "name": "hard failure",
+          "prompt": "diagnose. 로그인 후 깨져",
+          "expected_first_move": "Build or find a deterministic repro loop first.",
+          "must_ask_or_confirm": "Ask for artifact if no loop can be built.",
+          "must_not": "Do not jump straight to code changes."
+        },
+        {
+          "name": "intermittent bug",
+          "prompt": "가끔 실패해",
+          "expected_first_move": "Choose repeated-run, stress, bisection, or differential loop.",
+          "must_ask_or_confirm": "Ask for reproduction artifacts if needed.",
+          "must_not": "Do not claim fixed without rerunning the original loop."
+        },
+        {
+          "name": "performance regression",
+          "prompt": "최근 느려졌어",
+          "expected_first_move": "Measure a baseline and map probes to hypotheses.",
+          "must_ask_or_confirm": "Report ranked hypotheses before or after probing.",
+          "must_not": "Do not compare multiple changes at once."
+        }
+      ]
+    },
+    {
+      "skill": "improve-codebase-architecture",
+      "source": "curated",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "context_first",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "candidate_first",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "decision_guards",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "format",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "3 scenarios defined"
+        },
+        {
+          "name": "active sync",
+          "status": "PASS",
+          "detail": "curated source files match active skill root"
+        }
+      ],
+      "scenario_count": 3,
+      "scenarios": [
+        {
+          "name": "scan architecture",
+          "prompt": "improve-codebase 해줘",
+          "expected_first_move": "Read context and surface candidates first.",
+          "must_ask_or_confirm": "Ask which candidate to explore.",
+          "must_not": "Do not propose full interfaces immediately."
+        },
+        {
+          "name": "testability focus",
+          "prompt": "이걸 더 테스트 가능하게 만들어줘",
+          "expected_first_move": "Find seams and test surface problems.",
+          "must_ask_or_confirm": "Ask before deep-diving into a candidate.",
+          "must_not": "Do not refactor without user selecting scope."
+        },
+        {
+          "name": "ADR conflict",
+          "prompt": "기존 결정이 이상해 보여",
+          "expected_first_move": "Check ADR/context conflicts.",
+          "must_ask_or_confirm": "Ask whether to reopen or record an ADR when justified.",
+          "must_not": "Do not fight stable ADRs casually."
+        }
+      ]
+    },
+    {
+      "skill": "live-verify-loop",
+      "source": "curated",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "setup_questions",
+          "status": "PASS",
+          "detail": "5 required terms found"
+        },
+        {
+          "name": "ask_guard",
+          "status": "PASS",
+          "detail": "1 required terms found"
+        },
+        {
+          "name": "tool_priority",
+          "status": "PASS",
+          "detail": "5 required terms found"
+        },
+        {
+          "name": "browser_proof",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "3 scenarios defined"
+        },
+        {
+          "name": "active sync",
+          "status": "PASS",
+          "detail": "curated source files match active skill root"
+        }
+      ],
+      "scenario_count": 3,
+      "scenarios": [
+        {
+          "name": "ambiguous target",
+          "prompt": "100% 브라우저 통과할 때까지 봐줘",
+          "expected_first_move": "Ask for missing target scope, mode, criteria, tool plan, and round limits.",
+          "must_ask_or_confirm": "Confirm ambiguous setup before loop.",
+          "must_not": "Do not start clicking with undefined scope."
+        },
+        {
+          "name": "browser default",
+          "prompt": "localhost UI live verify 해줘",
+          "expected_first_move": "Use terminal for server/checks and Browser Use for proof.",
+          "must_ask_or_confirm": "Ask for credentials/destructive boundary if needed.",
+          "must_not": "Do not require Playwright MCP when Browser Use can prove it."
+        },
+        {
+          "name": "desktop state",
+          "prompt": "다운로드와 파일 피커까지 검증해줘",
+          "expected_first_move": "Escalate to Computer Use for OS/browser-profile state.",
+          "must_ask_or_confirm": "Confirm safe boundaries around files/accounts.",
+          "must_not": "Do not treat terminal-only checks as live proof."
+        }
+      ]
+    },
+    {
+      "skill": "harness-loop",
+      "source": "curated",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "delegation_guard",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "routing",
+          "status": "PASS",
+          "detail": "6 required terms found"
+        },
+        {
+          "name": "quality_gates",
+          "status": "PASS",
+          "detail": "4 required terms found"
+        },
+        {
+          "name": "stop_guard",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "3 scenarios defined"
+        },
+        {
+          "name": "active sync",
+          "status": "PASS",
+          "detail": "curated source files match active skill root"
+        }
+      ],
+      "scenario_count": 3,
+      "scenarios": [
+        {
+          "name": "no delegation",
+          "prompt": "이 버그 고쳐줘",
+          "expected_first_move": "Run locally with quality gates unless delegation was authorized.",
+          "must_ask_or_confirm": "Ask before spawning if task truly needs agents.",
+          "must_not": "Do not spawn subagents by default."
+        },
+        {
+          "name": "explicit agents",
+          "prompt": "agents plus verification로 개선해줘",
+          "expected_first_move": "Route mode and assign disjoint ownership when delegating.",
+          "must_ask_or_confirm": "Clarify overlapping write scopes if needed.",
+          "must_not": "Do not let workers revert unrelated changes."
+        },
+        {
+          "name": "UI changed",
+          "prompt": "UI 고치고 검증까지",
+          "expected_first_move": "Use Browser Use first and scripts for deterministic checks as needed.",
+          "must_ask_or_confirm": "Ask for credentials or destructive boundaries.",
+          "must_not": "Do not accept static analysis as final UI proof."
+        }
+      ]
+    },
+    {
+      "skill": "cantos-write",
+      "source": "curated",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger",
+          "status": "PASS",
+          "detail": "4 required terms found"
+        },
+        {
+          "name": "tool_selection",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "approval",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "visual_order",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "safety",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "3 scenarios defined"
+        },
+        {
+          "name": "active sync",
+          "status": "PASS",
+          "detail": "curated source files match active skill root"
+        }
+      ],
+      "scenario_count": 3,
+      "scenarios": [
+        {
+          "name": "mcp connected",
+          "prompt": "Cantos에 ADR 써줘",
+          "expected_first_move": "Use connected Cantos tool when available.",
+          "must_ask_or_confirm": "Ask approval before first remote registration/write if required.",
+          "must_not": "Do not create only local markdown while claiming remote write."
+        },
+        {
+          "name": "mcp missing",
+          "prompt": "Cantos DDR 준비해줘",
+          "expected_first_move": "Say Cantos MCP is not connected and offer local draft.",
+          "must_ask_or_confirm": "Ask whether to create local fallback.",
+          "must_not": "Do not pretend remote Cantos exists."
+        },
+        {
+          "name": "visual record",
+          "prompt": "브라우저 증거 붙여서 DDR",
+          "expected_first_move": "Capture Browser Use evidence by default, Computer Use if OS state matters.",
+          "must_ask_or_confirm": "Confirm missing visual evidence.",
+          "must_not": "Do not substitute Cantos record for verification."
+        }
+      ]
+    },
+    {
+      "skill": "ultradetail-walk",
+      "source": "curated",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "preflight",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "choice_points",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "tool_priority",
+          "status": "PASS",
+          "detail": "4 required terms found"
+        },
+        {
+          "name": "clean_claim_guard",
+          "status": "PASS",
+          "detail": "2 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "3 scenarios defined"
+        },
+        {
+          "name": "active sync",
+          "status": "PASS",
+          "detail": "curated source files match active skill root"
+        }
+      ],
+      "scenario_count": 3,
+      "scenarios": [
+        {
+          "name": "broad walk",
+          "prompt": "ultradetail로 버튼 전부 봐줘",
+          "expected_first_move": "Confirm scope, roles, tooling, and create plan.",
+          "must_ask_or_confirm": "Offer category/persona options when broad.",
+          "must_not": "Do not start without browser-capable tooling."
+        },
+        {
+          "name": "small scope",
+          "prompt": "이 한 페이지 클릭 전부 확인",
+          "expected_first_move": "Make conservative category/persona recommendation and proceed if risk is small.",
+          "must_ask_or_confirm": "Ask only when scope/risk needs adjustment.",
+          "must_not": "Do not remove selected personas silently."
+        },
+        {
+          "name": "no credentials",
+          "prompt": "관리자 플로우도 봐줘",
+          "expected_first_move": "Stop if login/test data is missing and cannot be safely created.",
+          "must_ask_or_confirm": "Ask for test data or scope narrowing.",
+          "must_not": "Do not use destructive flows."
+        }
+      ]
+    },
+    {
+      "skill": "ultradetail-loop",
+      "source": "curated",
+      "status": "PASS",
+      "assertions": [
+        {
+          "name": "frontmatter",
+          "status": "PASS",
+          "detail": "name and description present"
+        },
+        {
+          "name": "trigger",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "setup",
+          "status": "PASS",
+          "detail": "4 required terms found"
+        },
+        {
+          "name": "tool_priority",
+          "status": "PASS",
+          "detail": "4 required terms found"
+        },
+        {
+          "name": "round_cycle",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "stop",
+          "status": "PASS",
+          "detail": "3 required terms found"
+        },
+        {
+          "name": "ordered flow",
+          "status": "PASS",
+          "detail": "terms appear in expected order"
+        },
+        {
+          "name": "runtime residue",
+          "status": "PASS",
+          "detail": "no forbidden runtime markers"
+        },
+        {
+          "name": "scenario matrix",
+          "status": "PASS",
+          "detail": "3 scenarios defined"
+        },
+        {
+          "name": "active sync",
+          "status": "PASS",
+          "detail": "curated source files match active skill root"
+        }
+      ],
+      "scenario_count": 3,
+      "scenarios": [
+        {
+          "name": "release gate",
+          "prompt": "ultradetail-loop로 출시 전까지 반복해줘",
+          "expected_first_move": "Confirm scope, roles, browser tooling, hard limits, and evidence expectations.",
+          "must_ask_or_confirm": "Ask for destructive-flow boundaries.",
+          "must_not": "Do not run an unbounded loop."
+        },
+        {
+          "name": "playwright missing",
+          "prompt": "Playwright 없이 브라우저 루프",
+          "expected_first_move": "Use Browser Use or Computer Use if they can provide evidence.",
+          "must_ask_or_confirm": "Ask only if no browser-capable tool exists.",
+          "must_not": "Do not block merely because Playwright MCP is unavailable."
+        },
+        {
+          "name": "stagnation",
+          "prompt": "계속 같은 문제가 남아",
+          "expected_first_move": "Stop or reassess after repeated failed fix attempts.",
+          "must_ask_or_confirm": "Ask whether to narrow, redesign, or stop.",
+          "must_not": "Do not keep fixing symptoms forever."
+        }
+      ]
+    }
+  ]
+}

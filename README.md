@@ -21,7 +21,8 @@ AI가 가장 먼저 읽어야 할 파일:
 - `AI_BOOTSTRAP.md`: AI 실행 계약, macOS/Windows 분기, 금지 경계, 적용 순서.
 - `codex-harness.manifest.json`: 스킬/훅/에이전트/MCP/검증 기준의 machine-readable SSoT.
 - `docs/harness-boundary-classification.md`: Claude와 Codex를 섞지 않는 경계 기준.
-- `docs/skills-index.md`: 활성 개인 스킬 49개의 라우팅용 인덱스.
+- `docs/skills-index.md`: 활성 개인 스킬 59개의 라우팅용 인덱스.
+- `docs/skill-behavior-contract-tests.md`: 스킬 트리거/확인 질문/중단 조건 행동 계약 테스트.
 - `docs/troubleshooting.md`: 훅, 스킬, MCP, 터미널 문제의 진단/복구 경로.
 
 OS별 기본 흐름:
@@ -66,13 +67,20 @@ AI_BOOTSTRAP.md                    # AI 에이전트가 가장 먼저 읽을 실
 codex-harness.manifest.json         # 하네스 대상/검증/OS 분기 machine-readable manifest
 tools/
   codex_native_harness_migrate.py   # Codex 환경 적용 도구, 기본 dry-run
+  codex_curated_skill_sync.py        # codex/skills curated 스킬을 ~/.agents/skills로 명시적 동기화
+  codex_normalize_active_skill_agents.py # 활성 스킬의 oversized AGENTS.md 참조를 references/로 정규화
   codex_skill_index.py               # 활성 개인 스킬의 Markdown/JSON 라우팅 인덱스 생성
+  codex_skill_contract_verify.py      # 스킬 행동 계약 테스트: 질문/확인/도구 우선순위/중단 조건
   codex_harness_inventory.py        # Claude/Codex 자산 인벤토리와 재구축 baseline 리포트
   codex_harness_verify.py           # 상세 검증 게이트: 인코딩, hooks, skills, scripts, GitHub preflight
+codex/
+  skills/                           # Codex-native curated 스킬 원본, 명시적 sync 후 활성화
 docs/
   migration-summary.md              # 최근 이전 결과와 검증 요약
   skills-index.md                    # 개인 스킬 라우팅 인덱스
   skills-index.json                  # AI-readable 스킬 인덱스(raw)
+  skill-behavior-contract-tests.md    # 스킬별 행동 계약 테스트 매트릭스
+  skill-behavior-contract-tests.json  # 스킬별 행동 계약 테스트 결과(raw)
   troubleshooting.md                 # 운영 중 문제 진단/복구 가이드
   codex-native-rebuild-plan.md       # Claude 자산 분석 기반 재구축 전략
   codex-native-rebuild-guide.html    # 3-pass 재구축 방식 상세 HTML 설명서
@@ -99,10 +107,13 @@ docs/
 
 ```bash
 python3 tools/codex_harness_inventory.py --output docs/claude-corpus-inventory.md
+python3 tools/codex_curated_skill_sync.py
 python3 tools/codex_skill_index.py
+python3 tools/codex_skill_contract_verify.py --markdown-output docs/skill-behavior-contract-tests.md --json-output docs/skill-behavior-contract-tests.json
 python3 tools/codex_domain_profile.py --query "browser game with level editor"
 python3 tools/codex_native_harness_migrate.py
 python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json
+python3 tools/codex_curated_skill_sync.py --apply
 python3 tools/codex_native_harness_migrate.py --apply
 ```
 
@@ -116,9 +127,12 @@ python3 tools/codex_native_harness_migrate.py --apply
 - `~/.codex/scripts/*`
 - `~/.agents/skills/*`
 
+Curated Codex-native skills are versioned under `codex/skills/*` and copied into
+`~/.agents/skills/*` only through explicit sync or apply actions.
+
 ## 최신 상태
 
-2026-05-04 기준으로 개인 스킬 371개 파일을 Codex 스킬 위치에 반영했고, Codex validator와 UTF-8 검증을 통과했다. 이후 Batch 2에서 최상위 49개 스킬은 모두 `SKILL.md`, `name`, `description`, Claude runtime marker 제거 기준을 만족한다. Batch 4에서는 `agents.max_threads = 128`과 `[features].goals = true`를 하네스 정책으로 추가했다. Batch 5부터는 Claude와 Codex를 독립 active harness로 분류하고, 이 저장소의 적용 범위를 Codex 환경으로만 제한한다. Batch 9에서는 `docs/skills-index.md`와 `docs/skills-index.json`으로 개인 스킬을 AI-first 라우팅 가능한 인덱스로 만들고, `docs/troubleshooting.md`로 훅/스킬/MCP/터미널 문제의 복구 경로를 문서화했다.
+2026-05-04 기준으로 개인 스킬 371개 파일을 Codex 스킬 위치에 반영했고, Codex validator와 UTF-8 검증을 통과했다. 이후 Batch 2에서 최상위 49개 스킬은 모두 `SKILL.md`, `name`, `description`, Claude runtime marker 제거 기준을 만족한다. Batch 4에서는 `agents.max_threads = 128`과 `[features].goals = true`를 하네스 정책으로 추가했다. Batch 5부터는 Claude와 Codex를 독립 active harness로 분류하고, 이 저장소의 적용 범위를 Codex 환경으로만 제한한다. Batch 9에서는 `docs/skills-index.md`와 `docs/skills-index.json`으로 개인 스킬을 AI-first 라우팅 가능한 인덱스로 만들고, `docs/troubleshooting.md`로 훅/스킬/MCP/터미널 문제의 복구 경로를 문서화했다. Batch 10에서는 Codex-native curated 스킬 원본을 `codex/skills`에 버전관리하고 명시적 sync를 통해 활성 스킬 root에 반영하는 흐름을 추가했다.
 
 상세 흐름은 `docs/codex-native-rebuild-guide.html`에서 보고, 실제 baseline 수치는 `docs/claude-corpus-inventory.md`를 본다. GitHub 후보 하네스 검토와 저장소 푸시는 `docs/harness-verification-report.md`에서 `FAIL: 0`을 확인한 뒤 진행한다.
 

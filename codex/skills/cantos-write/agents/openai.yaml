@@ -1,0 +1,6 @@
+interface:
+  display_name: "Cantos Write"
+  short_description: "Write ADR, DDR, and journal records."
+  default_prompt: "Use $cantos-write to create a Cantos ADR, DDR, or journal record with evidence."
+policy:
+  allow_implicit_invocation: true

@@ -12,13 +12,19 @@ Claude-native active harness:
 
 Codex-native active harness:
   ~/.agents/skills
+
+Codex-native curated source:
+  codex/skills
 ```
 
 `~/.claude/skills`는 Claude에서 계속 사용하는 실사용 환경이다. `~/.agents/skills`는 Codex에서 사용하는 실사용 환경이다. 두 환경은 서로 덮어쓰지 않고, 같은 작업 철학이 필요할 때도 각 런타임에 맞는 별도 `SKILL.md`로 구현한다.
 
+`codex/skills`는 이 저장소가 소유하는 Codex-native curated 스킬 원본이다. 외부 하네스나 워크플로를 분석해 새로 재작성한 스킬은 이 경로에 보관하고, 실사용이 필요할 때만 `~/.agents/skills`로 명시적으로 동기화한다.
+
 ## 동기화 정책
 
 - 삭제 없는 병합을 기본값으로 한다.
+- `codex/skills`에서 `~/.agents/skills`로 동기화할 때도 삭제 없는 병합을 기본값으로 한다.
 - `__pycache__`, `.git`, `.DS_Store`만 제외한다.
 - 텍스트 파일은 UTF-8로 읽고 쓴다.
 - `CLAUDE.md`, `.claude`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` 같은 Claude 전용 실행 문맥은 Codex active harness에 실행 지시로 남기지 않는다.
@@ -55,7 +61,13 @@ Codex-native active harness:
 2. 3회 검토 게이트를 통과한다.
 3. Codex-native `SKILL.md`를 수정한다.
 4. 관련 문서를 업데이트한다.
-5. dry-run을 실행한다.
+5. curated source를 먼저 dry-run한다.
+
+```bash
+python3 tools/codex_curated_skill_sync.py
+```
+
+6. 기존 하네스 dry-run을 실행한다.
 
 ```bash
 python3 tools/codex_harness_inventory.py --output docs/claude-corpus-inventory.md
@@ -65,17 +77,37 @@ python3 tools/codex_harness_inventory.py --output docs/claude-corpus-inventory.m
 python3 tools/codex_native_harness_migrate.py
 ```
 
-6. 문제가 없으면 적용한다.
+7. 문제가 없으면 적용한다.
+
+```bash
+python3 tools/codex_curated_skill_sync.py --apply
+```
 
 ```bash
 python3 tools/codex_native_harness_migrate.py --apply
 ```
 
-7. 검증한다.
+8. 검증한다.
 
 ```bash
 bash ~/.agents/skills/infra-audit/scripts/infra-audit.sh --quick
 ```
+
+## 행동 계약 테스트
+
+새로 가져온 스킬은 파일 형식만 맞아서는 충분하지 않다. 실제 Codex 대화에서 트리거, 확인 질문, 사용자 승인 전 중단, 도구 우선순위, stop condition이 문서대로 드러나야 하므로 행동 계약 테스트를 함께 갱신한다.
+
+```bash
+python3 tools/codex_skill_contract_verify.py --markdown-output docs/skill-behavior-contract-tests.md --json-output docs/skill-behavior-contract-tests.json
+```
+
+검사 기준:
+
+- `$what`은 활성 스킬 루트의 골든 레퍼런스로 둔다.
+- `codex/skills` curated 스킬은 원본과 활성 `~/.agents/skills` 사본의 해시 일치를 확인한다.
+- 질문형 스킬은 무엇을 물어야 하는지와 무엇을 하면 안 되는지를 시나리오로 남긴다.
+- Browser Use, Computer Use, Playwright/script 우선순위가 필요한 스킬은 그 순서가 명시되어야 한다.
+- Claude 전용 런타임 마커가 실행 지시로 남아 있으면 실패로 본다.
 
 ## 주의
 

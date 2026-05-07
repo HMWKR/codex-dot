@@ -2,23 +2,23 @@
   "schema_version": "1.0.0",
   "source": "$HOME/.agents/skills",
   "generated_by": "tools/codex_skill_index.py",
-  "skills_count": 49,
+  "skills_count": 59,
   "categories": {
     "command-bridge": 5,
     "core": 1,
     "documents": 4,
-    "engineering": 6,
-    "orchestration": 11,
-    "reasoning": 11,
-    "support": 1,
-    "validation": 8,
+    "engineering": 8,
+    "orchestration": 12,
+    "reasoning": 12,
+    "support": 2,
+    "validation": 13,
     "web-platform": 2
   },
   "priorities": {
     "P0": 8,
-    "P1": 29,
-    "P2": 11,
-    "P3": 1
+    "P1": 36,
+    "P2": 13,
+    "P3": 2
   },
   "entries": [
     {
@@ -102,6 +102,16 @@
       "sha256": "dee583eac0e4587d1c1da8c657e03959713de5dee44adb69e83e708a98a4cc93"
     },
     {
+      "directory": "cantos-write",
+      "name": "cantos-write",
+      "description": "Cantos MCP writing workflow for ADR, DDR, journal, and visual verification records. Use when the user asks to write to Cantos, create ADR/DDR/journal entries, register a project in Cantos, attach visual verification evidence, or prepare records for a Cantos MCP connection. Prefer live Cantos MCP tools when connected; otherwise use an explicit local fallback.",
+      "category": "support",
+      "priority": "P3",
+      "path": "$HOME/.agents/skills/cantos-write/SKILL.md",
+      "line_count": 60,
+      "sha256": "208ec9c858180a008ebcea88470c2c4fe2ee113d2134ff56117489be3a732eba"
+    },
+    {
       "directory": "ce-advisor",
       "name": "ce-advisor",
       "description": "This skill provides CE+PE hybrid prompt optimization with 3+1 suggestions. Use when asked to \"optimize prompt\", \"ce advice\", \"improve my prompt\", \"제안해줘\", \"제안 해줘\", \"suggest\", \"advise\", or at the start of complex tasks requiring context optimization. Based on CE v2.0 principles (Right Altitude, Token Position, 4 Failure Modes).",
@@ -140,6 +150,16 @@
       "path": "$HOME/.agents/skills/deep-analysis-mode/SKILL.md",
       "line_count": 382,
       "sha256": "174f39307854227aed9aa3f054fa5f3dea2592b8fd292c8f2f3a1205ccb4cfe4"
+    },
+    {
+      "directory": "diagnose",
+      "name": "diagnose",
+      "description": "Disciplined bug and performance diagnosis loop - feedback loop first, reproduce, hypothesize, instrument, fix, regression-test, and clean up. Use when the user says \"diagnose\", \"debug this\", \"원인 진단\", \"버그 진단\", \"깨졌어\", \"failing\", \"throwing\", \"performance regression\", or reports a hard-to-explain failure.",
+      "category": "validation",
+      "priority": "P1",
+      "path": "$HOME/.agents/skills/diagnose/SKILL.md",
+      "line_count": 81,
+      "sha256": "caa3a408ed1aebfa20d9d56bcacc963c4724d829255c212e05cdefe56e3d8bb1"
     },
     {
       "directory": "docx",
@@ -182,6 +202,36 @@
       "sha256": "af5d528b8b793ef49f176ac93ee1660a2b55ee244bc0b2aa3693697f1077d16b"
     },
     {
+      "directory": "grill-me",
+      "name": "grill-me",
+      "description": "Relentless but concise planning interview for resolving a plan, design, product idea, architecture choice, or ambiguous implementation request before execution. Use when the user says \"grill me\", \"그릴미\", \"계획 검증\", \"질문하면서 다듬어줘\", \"stress-test this plan\", \"interview me about this\", or when a plan has unresolved branches that would make implementation risky.",
+      "category": "reasoning",
+      "priority": "P1",
+      "path": "$HOME/.agents/skills/grill-me/SKILL.md",
+      "line_count": 77,
+      "sha256": "ac94178d679d2cd9832414f9a969a7076e52c490d74a5e5f3ba2c9f0029ccd9f"
+    },
+    {
+      "directory": "harness-loop",
+      "name": "harness-loop",
+      "description": "Codex-native quality gate orchestration loop for work that explicitly needs subagents, repeated review, implementation, verification, and final reporting. Use when the user asks for a harness loop, agent orchestration, quality gate loop, multi-agent improvement loop, mega loop, task router, or \"agents plus verification\". Skip for simple questions, single-file edits, or requests that do not authorize delegation.",
+      "category": "orchestration",
+      "priority": "P1",
+      "path": "$HOME/.agents/skills/harness-loop/SKILL.md",
+      "line_count": 97,
+      "sha256": "fc5096e7af6b29b7194892c3f44a6465c1127a875aa9d76da0e0fd5135d6b0e2"
+    },
+    {
+      "directory": "improve-codebase-architecture",
+      "name": "improve-codebase-architecture",
+      "description": "Architecture improvement skill for finding deepening opportunities, testability gaps, shallow modules, tangled seams, and AI-navigability problems in a codebase. Use when the user says \"improve-codebase\", \"improve-codebase-architecture\", \"아키텍처 개선\", \"코드베이스 개선\", \"리팩터링 기회 찾아줘\", \"make this more testable\", or asks for architecture-level refactoring candidates.",
+      "category": "engineering",
+      "priority": "P2",
+      "path": "$HOME/.agents/skills/improve-codebase-architecture/SKILL.md",
+      "line_count": 70,
+      "sha256": "64dd5a05208ab1df07328a886b2086ce88fc1b3dc0d72ee5c0feac4387d902bf"
+    },
+    {
       "directory": "infra-audit",
       "name": "infra-audit",
       "description": "This skill should be used when the user asks to \"audit infra\", \"infra audit\", \"인프라 감사\", \"인프라 검사\", \"check infrastructure\", \"health check\", \"infra health\", \"설정 검사\", or \"인프라 건강도\". Codex 인프라(AGENTS.md, hooks, skills, rules, scripts, agents, MCP)의 종합 건강도를 점수(0-100) + 등급(S/A/B/C/F)으로 진단하고, 하니스 5축(CE/AC/GC/EL/SI) 기여도를 매핑한다.",
@@ -210,6 +260,16 @@
       "path": "$HOME/.agents/skills/js-refactor-cleanup-skill/SKILL.md",
       "line_count": 320,
       "sha256": "dc9cc15596979e129fda7dee24df3f98493d02a5df528607de5f92009024e2fa"
+    },
+    {
+      "directory": "live-verify-loop",
+      "name": "live-verify-loop",
+      "description": "Live browser verification loop for closing the gap between code passing and real user flows passing. Use when the user asks for live verification, \"100% until browser passes\", repeated Browser Use or Computer Use-assisted validation with fixes, console-clean verification, critical user journey proof, production-readiness QA, or multi-round live audit. Skip for one-shot tests, single bug fixes, or code-only generation.",
+      "category": "validation",
+      "priority": "P1",
+      "path": "$HOME/.agents/skills/live-verify-loop/SKILL.md",
+      "line_count": 150,
+      "sha256": "1fdaa14efdd9fe4ac44c33ae10d5fec3caf3c39a9c9e949ba52dee1674063364"
     },
     {
       "directory": "ooda",
@@ -382,6 +442,16 @@
       "sha256": "5c2d7a38067f48af948f0d23e2bdffaeb1285e86d0642d6fbc8ddc148befe613"
     },
     {
+      "directory": "tdd",
+      "name": "tdd",
+      "description": "Test-driven development loop for implementing features or fixing bugs one observable behavior at a time. Use when the user asks for TDD, \"red-green-refactor\", \"test first\", \"TDD + 피드백 루프\", integration-test-first development, regression-first bug fixes, or wants a disciplined feedback loop while coding.",
+      "category": "validation",
+      "priority": "P1",
+      "path": "$HOME/.agents/skills/tdd/SKILL.md",
+      "line_count": 66,
+      "sha256": "1505acb9c06e48269eea96096c56cdd9bb783943b29878c10bbd3f2d3ffa9691"
+    },
+    {
       "directory": "think-deep",
       "name": "think-deep",
       "description": "3단계 압축 사고 체인. 6개 스킬을 3 Stage로 융합하여 균형 잡힌 깊이와 효율 제공. Stage 1(분류+목적) → Stage 2(전제해체+최적화) → Stage 3(심층분석+적응실행). Use when \"/think-deep\", \"깊이 분석해줘\", \"제대로 생각해보자\", \"심층적으로 접근\", \"중요한 설계니까 꼼꼼하게\", or for important design decisions and architecture. NOT for: everyday tasks (use /think-lite), maximum depth (use /think-full). think- 패밀리 중 균형형. 토큰 25-35K.",
@@ -422,14 +492,44 @@
       "sha256": "317b1d11abece1ac856e6236e0325fff647dd44aaa1141357672abac1a352dba"
     },
     {
+      "directory": "to-prd",
+      "name": "to-prd",
+      "description": "Convert the current conversation, repo context, or feature discussion into a PRD suitable for a project issue tracker or local docs. Use when the user says \"to PRD\", \"to-prd\", \"PRD로 만들어줘\", \"제품 요구사항 문서\", \"turn this into a PRD\", or asks to publish a feature spec as an issue. Do not use for lightweight implementation plans unless the user wants a product-facing spec.",
+      "category": "engineering",
+      "priority": "P2",
+      "path": "$HOME/.agents/skills/to-prd/SKILL.md",
+      "line_count": 59,
+      "sha256": "0585dd00c4ffa86d0692d38ca65c2803cf5c8bf9bd2b458179713c3f0fcacd6c"
+    },
+    {
+      "directory": "ultradetail-loop",
+      "name": "ultradetail-loop",
+      "description": "High-cost exhaustive walk-fix-walk convergence loop for release gates. Use when the user asks for ultradetail loop, exhaustive QA until zero new defects, repeated click-everything rounds, walk fix re-walk, 100% defect removal, or launch readiness with adversarial personas every round. Skip for one-shot discovery, small fixes, or token-saving loops.",
+      "category": "validation",
+      "priority": "P1",
+      "path": "$HOME/.agents/skills/ultradetail-loop/SKILL.md",
+      "line_count": 105,
+      "sha256": "8c2117f295e6f627db7801704935ece2a5242ed9c6f97f5a0e09d29304219a04"
+    },
+    {
+      "directory": "ultradetail-walk",
+      "name": "ultradetail-walk",
+      "description": "Exhaustive one-shot persona walk-through for web apps after implementation. Use when the user asks for ultradetail walk, exhaustive QA, persona walk, click everything, every button/form/menu, adversarial browser inspection, implementation-ready live audit, or \"all interactions checked once\". Skip for ongoing fix loops, simple page checks, or when the user wants repeated convergence.",
+      "category": "validation",
+      "priority": "P1",
+      "path": "$HOME/.agents/skills/ultradetail-walk/SKILL.md",
+      "line_count": 119,
+      "sha256": "a4699c70afe1b06791f221dc830ac847c94335f2ab744697e95c2843af662b60"
+    },
+    {
       "directory": "unused-code-refactor-suggester",
       "name": "unused-code-refactor-suggester",
       "description": "Scans project source files to identify functions and classes that are not referenced elsewhere within the same file (file-scoped unused code). For each finding, generates a concise refactoring_report.md entry recommending deletion or preservation with a short reason and risk summary. Common triggers: \"find unused in file\", \"identify dead code per-file\", \"generate refactoring report\".",
       "category": "engineering",
       "priority": "P2",
       "path": "$HOME/.agents/skills/unused-code-refactor-suggester/SKILL.md",
-      "line_count": 294,
-      "sha256": "9ce9dc86e92ddbc3a60c4fcd00b26a58a0befe3d728347ea87bc8c3db4c40429"
+      "line_count": 300,
+      "sha256": "3e8c7c0bfb4d75b8dd2994d311b46b9a52701fc2f07d7e9f22627dfeaf6d47e8"
     },
     {
       "directory": "ux-pattern-researcher",
@@ -459,7 +559,7 @@
       "priority": "P2",
       "path": "$HOME/.agents/skills/vercel-react-best-practices/SKILL.md",
       "line_count": 483,
-      "sha256": "897a6b3ae7cac1f75add3045d5aa6e64292a1f2439e0fb1a53c35fa9a982e764"
+      "sha256": "24b741581a6cf49d77208c22c130776ba0ccc6c610ea6175cae590dbf2f54087"
     },
     {
       "directory": "web-design-guidelines",

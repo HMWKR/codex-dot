@@ -190,6 +190,7 @@ def check_workspace_files(checks: list[Check]) -> None:
     paths += sorted((WORKSPACE / "docs").glob("*"))
     paths += sorted((WORKSPACE / "docs" / "templates").glob("*"))
     paths += sorted((WORKSPACE / "docs" / "domain-profiles").glob("*"))
+    paths += sorted(iter_files(WORKSPACE / "codex" / "skills", TEXT_SUFFIXES))
     paths += sorted((WORKSPACE / ".github" / "workflows").glob("*.yml"))
     paths += sorted((WORKSPACE / ".github" / "workflows").glob("*.yaml"))
     paths += sorted((WORKSPACE / "tools").glob("*.py"))
@@ -225,16 +226,16 @@ def check_workspace_files(checks: list[Check]) -> None:
 
 def check_documentation_sync(checks: list[Check]) -> None:
     required = {
-        WORKSPACE / "README.md": ["AI_BOOTSTRAP.md", "codex-harness.manifest.json", "codex_harness_verify.py", "harness-verification-report.md", "external-harness-import-notes.md", "agents.max_threads", "harness-boundary-classification.md", "codex_domain_profile.py", "skills-index.md", "troubleshooting.md"],
-        WORKSPACE / "AI_BOOTSTRAP.md": ["macOS", "Windows", "dry-run", "--apply", "Do not modify `~/.claude`", "codex-harness.manifest.json", "skills-index.md", "troubleshooting.md"],
-        WORKSPACE / "codex-harness.manifest.json": ["ai_first", "owned_targets", "expected_hook_events", "mcp_policy", "macos_dry_run", "windows_dry_run", "skills_index"],
+        WORKSPACE / "README.md": ["AI_BOOTSTRAP.md", "codex-harness.manifest.json", "codex_harness_verify.py", "harness-verification-report.md", "external-harness-import-notes.md", "agents.max_threads", "harness-boundary-classification.md", "codex_domain_profile.py", "skills-index.md", "troubleshooting.md", "codex_curated_skill_sync.py", "codex/skills"],
+        WORKSPACE / "AI_BOOTSTRAP.md": ["macOS", "Windows", "dry-run", "--apply", "Do not modify `~/.claude`", "codex-harness.manifest.json", "skills-index.md", "troubleshooting.md", "codex_curated_skill_sync.py"],
+        WORKSPACE / "codex-harness.manifest.json": ["ai_first", "owned_targets", "expected_hook_events", "mcp_policy", "macos_dry_run", "windows_dry_run", "skills_index", "curated_skills"],
         WORKSPACE / "docs" / "github-workflow.md": ["codex_harness_verify.py", "harness-verification-report.md", "external-harness-import-notes.md", "release-checklist.md"],
         WORKSPACE / "docs" / "codex-native-rebuild-plan.md": ["harness-verification-report.md", "external-harness-import-notes.md", "harness-boundary-classification.md", "agents.max_threads", "goals", "FAIL"],
         WORKSPACE / "docs" / "migration-summary.md": ["codex_harness_verify.py", "Harness Verification Report", "external-harness-import-notes.md", "agents.max_threads"],
         WORKSPACE / "docs" / "github-harness-candidate-analysis.html": ["external-harness-import-notes.md"],
         WORKSPACE / "docs" / "external-harness-import-notes.md": ["Batch 4A", "Batch 4B", "Batch 4C", "Batch 4D"],
         WORKSPACE / "docs" / "harness-boundary-classification.md": ["Claude-native active harness", "Codex-native active harness", "Project control plane", "Codex-only apply policy"],
-        WORKSPACE / "docs" / "release-checklist.md": ["Secret/PII preflight", "Restore dry-run", "Idempotency", "MCP"],
+        WORKSPACE / "docs" / "release-checklist.md": ["Secret/PII preflight", "Restore dry-run", "Idempotency", "MCP", "git status --short"],
         WORKSPACE / "docs" / "macos-terminal-codex-setup.md": ["AppTranslocation", "/Applications/Codex.app", "/opt/homebrew/bin/codex", "codex mcp list"],
         WORKSPACE / "docs" / "skills-index.md": ["Codex Skill Index", "Routing Rules", "Regenerate", "$HOME/.agents/skills"],
         WORKSPACE / "docs" / "skills-index.json": ["schema_version", "skills_count", "entries", "$HOME/.agents/skills"],
@@ -322,7 +323,7 @@ def check_ai_bootstrap_contract(checks: list[Check]) -> None:
         if not isinstance(read_order, list):
             issues.append(f"{manifest_path}: read_order must be a list")
         else:
-            required_order = ["AI_BOOTSTRAP.md", "codex-harness.manifest.json", "README.md", "docs/skills-index.md", "docs/troubleshooting.md", "tools/codex_native_harness_migrate.py", "tools/codex_skill_index.py", "tools/codex_harness_verify.py"]
+            required_order = ["AI_BOOTSTRAP.md", "codex-harness.manifest.json", "README.md", "docs/skills-index.md", "docs/troubleshooting.md", "tools/codex_native_harness_migrate.py", "tools/codex_curated_skill_sync.py", "tools/codex_skill_index.py", "tools/codex_harness_verify.py"]
             for item in required_order:
                 if item not in read_order:
                     issues.append(f"{manifest_path}: read_order missing {item!r}")
@@ -362,6 +363,10 @@ def check_ai_bootstrap_contract(checks: list[Check]) -> None:
         if not isinstance(skills_index, dict) or skills_index.get("markdown") != "docs/skills-index.md" or skills_index.get("json") != "docs/skills-index.json":
             issues.append(f"{manifest_path}: skills_index must point to docs/skills-index.md and docs/skills-index.json")
 
+        curated_skills = manifest.get("curated_skills")
+        if not isinstance(curated_skills, dict) or curated_skills.get("source") != "codex/skills" or curated_skills.get("sync_tool") != "tools/codex_curated_skill_sync.py":
+            issues.append(f"{manifest_path}: curated_skills must point to codex/skills and tools/codex_curated_skill_sync.py")
+
     if issues:
         add(checks, "workspace", "AI bootstrap contract", "FAIL", "; ".join(issues[:30]))
     else:
@@ -369,7 +374,7 @@ def check_ai_bootstrap_contract(checks: list[Check]) -> None:
 
 
 def check_secret_preflight(checks: list[Check]) -> None:
-    roots = [WORKSPACE / "README.md", WORKSPACE / "AI_BOOTSTRAP.md", WORKSPACE / "codex-harness.manifest.json", WORKSPACE / ".gitignore", WORKSPACE / "docs", WORKSPACE / "tools", WORKSPACE / ".github"]
+    roots = [WORKSPACE / "README.md", WORKSPACE / "AI_BOOTSTRAP.md", WORKSPACE / "codex-harness.manifest.json", WORKSPACE / ".gitignore", WORKSPACE / "docs", WORKSPACE / "tools", WORKSPACE / "codex" / "skills", WORKSPACE / ".github"]
     offenders: list[str] = []
     scanned = 0
     for root in roots:
@@ -653,6 +658,34 @@ def check_skill_index(checks: list[Check], *, workspace_only: bool = False) -> N
         add(checks, "skills", "AI skill index", "PASS", detail)
 
 
+def check_skill_behavior_contracts(checks: list[Check], *, workspace_only: bool = False) -> None:
+    command = [sys.executable, str(WORKSPACE / "tools" / "codex_skill_contract_verify.py")]
+    if workspace_only:
+        command.append("--workspace-only")
+    result = subprocess.run(command, cwd=WORKSPACE, text=True, capture_output=True, encoding="utf-8", errors="replace")
+    if result.returncode != 0:
+        add(checks, "skills", "Skill behavior contracts", "FAIL", (result.stdout + result.stderr).strip())
+        return
+    try:
+        payload = json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        add(checks, "skills", "Skill behavior contracts", "FAIL", f"invalid JSON: {exc}; output={result.stdout[:500]}")
+        return
+    summary = payload.get("summary") if isinstance(payload, dict) else None
+    if not isinstance(summary, dict):
+        add(checks, "skills", "Skill behavior contracts", "FAIL", "missing summary")
+        return
+    fail = int(summary.get("fail") or 0)
+    warn = int(summary.get("warn") or 0)
+    detail = f"{summary.get('contracts')} contracts, {summary.get('scenarios')} scenarios, fail {fail}, warn {warn}"
+    if fail:
+        add(checks, "skills", "Skill behavior contracts", "FAIL", detail)
+    elif warn:
+        add(checks, "skills", "Skill behavior contracts", "WARN", detail)
+    else:
+        add(checks, "skills", "Skill behavior contracts", "PASS", detail)
+
+
 def check_config_and_hooks(checks: list[Check]) -> None:
     hooks_path = CODEX / "hooks.json"
     try:
@@ -928,10 +961,12 @@ def check_migration_tools(checks: list[Check], *, workspace_only: bool = False) 
         )
         if inventory.returncode != 0:
             add(checks, "migration", "inventory generation", "FAIL", inventory.stdout + inventory.stderr)
-        elif "ready | 49" in inventory.stdout and "| normalize | 0" in inventory.stdout:
-            add(checks, "migration", "inventory generation", "PASS", "ready 49, normalize 0")
         else:
-            add(checks, "migration", "inventory generation", "WARN", "inventory generated but expected readiness summary was not found")
+            readiness = parse_inventory_readiness(inventory.stdout)
+            if readiness.get("normalize") == 0 and readiness.get("frontmatter") == 0 and readiness.get("missing") == 0 and readiness.get("ready", 0) > 0:
+                add(checks, "migration", "inventory generation", "PASS", f"ready {readiness['ready']}, normalize 0")
+            else:
+                add(checks, "migration", "inventory generation", "WARN", "inventory generated but readiness summary was incomplete or not clean")
 
         validator = run_codex_validator()
         add(checks, "migration", "Codex validator", validator[0], validator[1])
@@ -945,8 +980,11 @@ def check_github_preflight(checks: list[Check]) -> None:
     if status.returncode != 0:
         add(checks, "github", "Git status", "FAIL", status.stdout + status.stderr)
     else:
-        detail = status.stdout.strip() or "clean worktree"
-        add(checks, "github", "Git status", "PASS", detail)
+        detail = status.stdout.strip()
+        if detail:
+            add(checks, "github", "Git status", "WARN", "dirty worktree; clean before release:\n" + detail)
+        else:
+            add(checks, "github", "Git status", "PASS", "clean worktree")
 
 
 def run_codex_validator() -> tuple[str, str]:
@@ -958,9 +996,45 @@ def run_codex_validator() -> tuple[str, str]:
     if result.returncode != 0:
         return "FAIL", result.stdout + result.stderr
     warnings = [line for line in result.stdout.splitlines() if line.strip().startswith("warning:")]
-    if warnings:
-        return "WARN", f"validator passed with {len(warnings)} warnings"
+    actionable = [warning for warning in warnings if is_actionable_validator_warning(warning)]
+    ignored = len(warnings) - len(actionable)
+    if actionable:
+        detail = f"validator passed with {len(actionable)} actionable warnings"
+        if ignored:
+            detail += f"; {ignored} cache/reference warnings ignored"
+        detail += ": " + " | ".join(actionable[:5])
+        return "WARN", detail
+    if ignored:
+        return "PASS", f"validator passed; {ignored} cache/reference warnings ignored"
     return "PASS", "validator passed without warnings"
+
+
+def parse_inventory_readiness(stdout: str) -> dict[str, int]:
+    readiness: dict[str, int] = {}
+    for line in stdout.splitlines():
+        match = re.match(r"\|\s*(ready|normalize|frontmatter|missing)\s*\|\s*(\d+)\s*\|", line)
+        if match:
+            readiness[match.group(1)] = int(match.group(2))
+    return readiness
+
+
+def is_actionable_validator_warning(line: str) -> bool:
+    match = re.match(r"\s*warning:\s+(.+?)\s+-\s+", line)
+    if not match:
+        return True
+    path_text = match.group(1)
+    if path_text == "AGENTS.md":
+        return True
+    if path_text.startswith(".agents/skills/"):
+        return True
+    if path_text.startswith(".codex/"):
+        ignored_prefixes = (
+            ".codex/.tmp/",
+            ".codex/plugins/cache/",
+            ".codex/vendor_imports/",
+        )
+        return not path_text.startswith(ignored_prefixes)
+    return False
 
 
 def build_markdown(checks: list[Check]) -> str:
@@ -992,6 +1066,7 @@ def build_markdown(checks: list[Check]) -> str:
             "## Gate",
             "",
             "GitHub 후보 하네스 검토는 `FAIL`이 0개일 때만 진행한다. `WARN`은 원인과 허용 범위를 문서화한 경우 pass로 본다.",
+            "`github / Git status`의 dirty worktree `WARN`은 개발 중 진단용으로만 허용하며, release 전에는 반드시 clean 상태로 정리한다.",
             "",
         ]
     )
@@ -1011,6 +1086,7 @@ def main() -> int:
     check_ai_bootstrap_contract(checks)
     check_secret_preflight(checks)
     check_skill_index(checks, workspace_only=args.workspace_only)
+    check_skill_behavior_contracts(checks, workspace_only=args.workspace_only)
     check_harness_boundary_classification(checks)
     if not args.workspace_only:
         check_target_encoding(checks)

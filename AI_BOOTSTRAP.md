@@ -24,8 +24,9 @@ Read these files in order before editing or applying anything:
 8. `docs/troubleshooting.md`
 9. `docs/release-checklist.md`
 10. `tools/codex_native_harness_migrate.py`
-11. `tools/codex_skill_index.py`
-12. `tools/codex_harness_verify.py`
+11. `tools/codex_curated_skill_sync.py`
+12. `tools/codex_skill_index.py`
+13. `tools/codex_harness_verify.py`
 
 ## Non-Negotiable Safety Rules
 
@@ -73,9 +74,16 @@ If local skills are present and the task is to refresh this repository's skill r
 python3 tools/codex_skill_index.py
 ```
 
+If the repository's curated Codex-native skills should be inspected before activation:
+
+```bash
+python3 tools/codex_curated_skill_sync.py
+```
+
 If the user approves real application:
 
 ```bash
+python3 tools/codex_curated_skill_sync.py --apply
 python3 tools/codex_native_harness_migrate.py --apply
 python3 tools/codex_harness_verify.py --markdown-output docs/harness-verification-report.md --json-output docs/harness-verification-report.json
 ```
@@ -140,14 +148,15 @@ winget install PHP.PHP
 2. Read `codex-harness.manifest.json`.
 3. Explain the target paths and safety boundary to the user.
 4. Run migration dry-run.
-5. Regenerate the skill index with `tools/codex_skill_index.py` when local skills are present.
-6. Run verifier.
-7. Report PASS/WARN/FAIL and any Windows/macOS-specific caveat.
-8. Use `docs/troubleshooting.md` before changing policy when hooks, skills, MCP, or terminal Codex fail.
-9. Ask for explicit approval before `--apply`.
-10. Apply only to Codex-owned paths.
-11. Re-run skill index and verifier.
-12. If this repo is under Git control, commit documentation or harness-control-plane changes separately from home runtime changes.
+5. Run curated skill sync dry-run if `codex/skills` exists.
+6. Regenerate the skill index with `tools/codex_skill_index.py` when local skills are present.
+7. Run verifier.
+8. Report PASS/WARN/FAIL and any Windows/macOS-specific caveat.
+9. Use `docs/troubleshooting.md` before changing policy when hooks, skills, MCP, or terminal Codex fail.
+10. Ask for explicit approval before `--apply`.
+11. Apply only to Codex-owned paths.
+12. Re-run skill index and verifier.
+13. If this repo is under Git control, commit documentation or harness-control-plane changes separately from home runtime changes.
 
 ## Success Criteria
 
@@ -162,3 +171,4 @@ An AI agent has followed this contract when:
 - It distinguishes macOS commands from Windows commands.
 - It keeps `docs/skills-index.md` and `docs/skills-index.json` in sync with active local skills when available.
 - It uses `docs/troubleshooting.md` for known hook, skill, MCP, terminal, and encoding failure modes.
+- It treats dirty `git status --short` as a release-blocking cleanup item, not as a clean PASS.
